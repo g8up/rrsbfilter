@@ -1,22 +1,25 @@
 /*
 功能：人人2B过滤器
 创建：2012.03.19
-版本：1.2.3
-更新：2012.04.03
 作者：笃行天下
-电邮:IamSigma.js@gmail.com
+微信：rrsbfilter
+电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
+版本：1.3.0
+更新：2012年10月16日 17:35:10
 */
 var isOpen = true;
 var killedNum = 0;//本次sb
 var len = 0 ; //本次扫描总数
 //词库目前不够智能，向误伤的孩纸表示哀怜，后续会更新成动态词库 -Sigma
 var SBWORD = [
-'求互访', '求来访', '求关注', '求人气', '求围观', '求访客','求访', '互访','访必回',
-'加好友','关注我','加我好友','求交往','求交友','互踩','刷人气',
-'瘦身', '减肥','减重','速进','联系我','见状态',
-'来访','回访','来看看吧','关注'
+'互访', '求来访', '求关注', '求人气', '求围观', '求访', '访必回','互粉',
+'关注我','互踩','刷人气','加好友','加我好友','求交往','求交友','请关注',
+'速进','联系我','见状态','回访','欢迎来访',
+'来看看吧','瘦身', '减肥','减重','淘宝兼职'
 ];
+//堆积的高频无意义纯字符
+var punctuations = ['\\.','·','。',',','，','`','…','0','1','2','3','='];
 
 chrome.extension.sendRequest({
 		action: "getIsOpen"
@@ -26,42 +29,74 @@ chrome.extension.sendRequest({
 		if (isOpen) {
 			killer();
 		}
-});
+	}
+);
 
 function killer(){
-	//杀SB集中营
+	var iKnowWhereSBsAre = '';
 	var curURL = window.location.href.toLowerCase(),
-	//http://www.renren.com/103433276
-	//http://www.renren.com/236499442?portal=homeFootprint&ref=home_footprint
-	//http://www.renren.com/103433276/profile
-	//http://www.renren.com/103433276#/103433276
-	regPerson  = new RegExp(/http:\/\/www\.renren\.com\/\d{9}((\?.*)?|\/profile|#.*)/),//个人主页
-	//http://gossip.renren.com/getgossiplist.do?id=236499442&age=recent
-	regComment = new RegExp(/http:\/\/gossip\.renren\.com\/getgossiplist\.do\?id=\d{9}/),//留言板
-	//http://page.renren.com/699153758/note/813996479?re
-	regPage    = new RegExp(/http:\/\/page\.renren\.com\/.+\/note\/\d+/), //公共主页日志
-	//http://blog.renren.com/blog/243278337/813798012?fromfriendblog
-	//http://blog.renren.com/blog/236499442/788024815
-	regBlog    = new RegExp(/http:\/\/blog\.renren\.com\/blog\/\d{9}\/.+/),//个人日志
-	//http://xiaozu.renren.com/xiaozu/137061/336284849
-	//http://xiaozu.renren.com/xiaozu/137061/thread/336526378?home(未优化dom结构)
-	regGroup  = new RegExp(/http:\/\/xiaozu\.renren\.com\/xiaozu\/\d+\/.+/);//小组
-	//http://page.renren.com/600002874/photo/5735164746?ref=
-	regPhoto = new RegExp(/http:\/\/page\.renren\.com\/\d{9}\/photo\/\d+/);//相册
-	//http://zhan.renren.com/topzhan?ref=hotnewsfeed&sfet=3732&fin=27&ff_id=&from=PubNewFeed（观察）
-	//regZhan(小站)
+		regPerson  = new RegExp(/http:\/\/www\.renren\.com\/\d{9}(((\?.*)?$)|((#.*)$))/),//首页
+		regProfile = new RegExp(/http:\/\/www\.renren\.com\/\d{9}\/profile/);//个人主页
+		regBlog    = new RegExp(/http:\/\/blog\.renren\.com\/blog\/\d{9}\/.+/),//个人日志
+		regComment = new RegExp(/http:\/\/gossip\.renren\.com\/getgossiplist\.do\?id=\d{9}/),//留言板
+		regPage    = new RegExp(/http:\/\/page\.renren\.com\/.+\/note\/\d+/), //公共主页日志
+		regGroup   = new RegExp(/http:\/\/xiaozu\.renren\.com\/xiaozu\/\d+\/.+/);//小组
+		regPhoto   = new RegExp(/http:\/\/page\.renren\.com\/\d{9}\/photo\//);//公共主页相册
+		regZhan    = new RegExp(/http:\/\/zhan\.renren\.com\/.*/);//小站
+		regShare   = new RegExp(/http:\/\/share\.renren\.com\/share\/\d{9}/);//分享
+		regBShare  = new RegExp(/http:\/\/blog\.renren\.com\/share\/\d{9}/);//日志分享
+		regPPhoto  = new RegExp(/http:\/\/photo\.renren\.com\/photo\/\d{9}/);//个人相册 added2012.10.13
+		regeFdoing = new RegExp(/http:\/\/page\.renren\.com\/\d{9}\/fdoing/);//个人状态 added2012.10.13
 
 	if(regPerson.test(curURL)){
-		killPerson();
-	}else if(regPage.test(curURL)) {
-		killPage();
-	}else if(regBlog.test(curURL) || regPhoto.test(curURL)){
-		killBlog();
-	}else if(regGroup.test(curURL)){
-		killGroup();
+		iKnowWhereSBsAre = {item:'.feed-replies .a-reply',cmt:'p.text'};
+		_log('首页');
 	}
-	setKilledNum(killedNum); 
-	loger(len);//日志输出
+	else if( regProfile.test( curURL ) ){
+		iKnowWhereSBsAre = {item:'.feed-replies .a-reply',cmt:'p.text'};
+		_log('个人主页');
+	}
+	else if( regPPhoto.test( curURL ) ) {
+		iKnowWhereSBsAre = {item:'#commContainer dd',cmt:'p.content'};
+		_log('个人相册');
+	}
+	else if( regeFdoing.test( curURL ) ) {
+		iKnowWhereSBsAre = {item:'#comment_list dd',cmt:'p.content span'};
+		_log('个人状态');
+	}
+	else if( regPage.test( curURL ) ) {
+		iKnowWhereSBsAre = {item:'#commentlist li',cmt:'div.text-content'};
+		_log('公共主页日志');
+	}
+	else if( regBShare.test( curURL ) ){
+		iKnowWhereSBsAre = {item:'#cmtsListCon>div.replies>div:not([id="ilike"])>dl[id*="comment_list"]>dd',cmt:'p.content'};
+		_log('日志分享');
+	}
+	else if( regBlog.test( curURL ) || regPhoto.test( curURL ) ){
+		iKnowWhereSBsAre = {item:'div.replies dl.replies:not([id="ILike_Box"]) dd',cmt:'p.content'};
+		_log('个人日志、公共主页相册');
+	}
+	else if( regShare.test( curURL ) ){
+		// iKnowWhereSBsAre = {item:'div.replies div dl.replies dd',cmt:'p.content span'};
+		//iKnowWhereSBsAre = {item:'#cmtsListCon div.replies div dl.replies dd',cmt:'p.content'};//操蛋，异步加载的评论不带<span />！FUCK！FUCK！FUCK！
+		iKnowWhereSBsAre = {item:'#allCmtsList>div>dl[class="replies"]:not(:first-child)>dd',cmt:'p.content'};//视频分享
+		//参考资料：http://www.w3.org/TR/css3-selectors/#negation
+		_log('分享');
+	}
+	else if( regGroup.test( curURL ) ){
+		iKnowWhereSBsAre = {item:'#topicList li',cmt:'div.content'};
+		_log('小组');
+	}
+	else if( regZhan.test( curURL ) ){
+		iKnowWhereSBsAre = {item:'.reply-list li',cmt:'span.comment-text'};
+		_log('小站');
+	}
+
+	if( iKnowWhereSBsAre != ''){
+		superKiller( iKnowWhereSBsAre );
+		setKilledNum( killedNum ); 
+		loger(len);//日志输出
+	}
 }
 
 function setKilledNum(n) {//设置回显个数
@@ -71,77 +106,42 @@ function setKilledNum(n) {//设置回显个数
 	});
 }
 
-function killGroup ( ) {
-	var contents = document.getElementsByClassName('content');
-	if(contents){
-		len = contents.length;
-		for (var i = 0 ; i < len; i++ ) {
-			var cmtObj = contents[i],
-			cmt        = cmtObj.innerHTML;
-			if( filter(cmt) ){
-				var p = cmtObj.parentNode.parentNode;//<div>
-				if ( p.tagName.toLowerCase() == 'li' ) {
-					howToTreatSB( p , i , cmt );
-				}
-			}
-		}
-	}
+/*
+{
+	item:containerId,容器id和item标签名，如'#comment_list dd'
+	cmt:commentId  评论内容标签名，如'p.content span'
 }
-function killBlog () {
-	var contents = document.getElementsByClassName('content');
-	if(contents){
-		len = contents.length;
-		for (var i = 0 ; i < len; i++ ) {
-			var cmtObj = contents[i],
-			cmt        = cmtObj.innerHTML;
-			if( filter(cmt) ){
-				var p = cmtObj.parentNode.parentNode;//<dd>
-				if (p.tagName.toLowerCase() == 'dd') {
-					howToTreatSB( p , i , cmt );
-				}
-			}
-		}
-	}
-}
-function killPerson ( ) {
-	var rcs = document.getElementsByClassName('replycontent');
-	if (rcs) {
-		len = rcs.length;
-		for (var i = 0; i < len; i++) {
-			var cmtObj = rcs[i],
-			cmt        = cmtObj.innerHTML;
-			if( filter(cmt) ){
-				var p = cmtObj.parentNode.parentNode;
-				if (p.tagName.toLowerCase() == 'div' && ( trim( p.className ) == 'statuscmtitem' || trim( p.className ) == 'statuscmtitem more')) {
-					howToTreatSB( p , i , cmt );
-				}
-			}
-		}
-	}
-}
-function killPage() {
-	//杀灭公共主页日志
-	var cl = document.getElementById("commentlist");
-	if (cl) {
-		var cmtObjs = cl.getElementsByClassName('text-content');
-		len         = cmtObjs.length;
-		for (var i = 0; i < len; i++) { //扫描评论
-			var cmtObj = cmtObjs[i],
-			cmt        = cmtObj.innerHTML;
-			if ( filter(cmt) ) {
-				var p = cmtObj.parentNode.parentNode;
-				if (p.tagName.toLowerCase() == 'li') {
-					howToTreatSB( p , i , cmt );
-				}
-			}
-		}
-	}
-}
+*/
+function superKiller( json ){
+	// _log('I\'m killing ...')
+	try{
+		var itemSelector = json.item,
+			cmtSelector = json.cmt;
 
+		var items = document.querySelectorAll( itemSelector );
+		if( items ){
+			len = items.length
+			for( var i = 0 ; i < len ; i ++ ){
+				var item = items[i];
+				if ( item.getAttribute("rrsb") != 1 ) {
+					var	cmt = item.querySelector( cmtSelector ).innerHTML;
+					if( filter( cmt ) ){
+						howToTreatSB( item , i , cmt );
+					}
+				}
+				item.setAttribute("rrsb",1);//标记处理
+			}
+		}
+	}catch( e ){
+		var url = encodeURIComponent( window.location.href ),
+			error =  encodeURIComponent( e.toString() );
+		new Image().src = "http://duxing.sinaapp.com/chrome/update/RRSBfilter/infocenter.php?url=" + url + "&error=" + error;
+	}
+}
 
 function filter ( cmt ) {
-	var _cmt = trim (cmt);
-	comm = getChinese( _cmt );
+	var _cmt = trim (cmt),
+		comm = getChinese( _cmt );
 	if (comm == '') {//没有中文
 		return punctuationFilter( _cmt );
 	}
@@ -158,7 +158,6 @@ function punctuationFilter( cmt ){//过滤符号堆积的评论
 		if( comm == '' ){
 			return false;
 		}
-		var punctuations = ['\\.','。',',','，','`','…','0','1','2','3'];
 		for (var i = 0 ; i < punctuations.length; i++) {
 			var reg = new RegExp( punctuations[i] + "+");
 			if(comm.replace( reg , '') == ''){
@@ -167,20 +166,18 @@ function punctuationFilter( cmt ){//过滤符号堆积的评论
 		}
 		return false;
 }
+
 function howToTreatSB( SBNode , i , cmt ){
-	if (SBNode.getAttribute("RRSB") != 1) {
-		var n = 30 ,
-		tBlur  = setInterval(function(){//频繁开启导致闪烁，待改进
-			n--;
-			SBNode.style.opacity = (n/100)+'';
-			if(n==5){
-				clearInterval( tBlur );
-			}
-		},400);
-		SBNode.setAttribute("RRSB",1);//标记处理
-		killedNum ++;
-		console.log( i + 'sb:' + trim(cmt));
-	};
+	var n = 30 ,
+		tBlur  = setInterval(function(){
+		n--;
+		SBNode.style.opacity = (n/100)+'';
+		if(n==6){
+			clearInterval( tBlur );
+		}
+	},400);
+	killedNum ++;
+	_log( i + 'sb:' + trim(cmt));
 }
 
 function loger ( len ) {
@@ -197,6 +194,10 @@ function loger ( len ) {
 		console.log('执行时刻：' + getTime());
 		console.log('\n');		
 	});
+}
+
+function _log( msg ){
+	console.log( 'rrsb:' + msg );
 }
 
 function getTime() {
