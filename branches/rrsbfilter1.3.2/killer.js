@@ -5,8 +5,8 @@
 微信：rrsbfilter
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
-版本：1.3.1
-更新：2013年4月16日 14:52:39
+版本：1.3.2
+更新：2013年4月24日 16:09:50
 */
 var isOpen = true;
 //词库目前不够智能，向误伤的孩纸表示哀怜，后续会更新成动态词库 -Sigma
@@ -171,7 +171,7 @@ function report( msg ){
 }
 
 function filter ( cmt ) {
-	var _cmt = trim (cmt),
+	var _cmt = cmt.trim(),
 		comm = getChinese( _cmt );
 	if (comm == '') {//没有中文
 		return punctuationFilter( _cmt );
@@ -207,7 +207,7 @@ function howToTreatSB( SBNode , i , cmt ){
 			clearInterval( tBlur );
 		}
 	},400);
-	_log( i + 'sb:' + trim(cmt));
+	_log( i + 'sb:' + cmt.trim() );
 }
 
 function loger ( len , killedNum, len_curScan ) {
@@ -238,10 +238,6 @@ function getTime() {
 	s = d.getSeconds();
 	str = h + ':' + (m < 10 ? '0' + m: m) + ':' + (s < 10 ? '0' + s: s );
 	return str;
-}
-
-function trim( str ) {
-	 return str.replace( /(^\s*)|(\s*$)/g , "" );
 }
 
 function getChinese( str ) {
