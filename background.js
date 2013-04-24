@@ -5,8 +5,8 @@
 微信：rrsbfilter
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
-版本：1.3.0
-更新：2012年10月15日 01:16:35
+版本：1.3.1
+更新：2013年4月16日 16:54:50
 */
 var isOpen = true ,
 	DELAY_POPICON = 2000,
@@ -43,26 +43,70 @@ chrome.browserAction.onClicked.addListener(function(tabs) {
 	isOpen ? console.log('\u4EBA\u4EBA2B\u8FC7\u6EE4\u5668OPEN -' + getTime()) : console.log('\u4EBA\u4EBA2B\u8FC7\u6EE4\u5668CLOSE-' + getTime());
 	chrome.tabs.executeScript(null, {file:"killer.js"});
 });
+
+//需要处理的异步请求集合
+var asynchReqSet = [
+  		{
+  			title:'相册',
+	  		//http://photo.renren.com/photo/105663055/photo-5733354611/ajax
+	  		reg:/^http:\/\/photo\.renren\.com\/photo\/\d{9}\/.+\/ajax///
+	  	},
+	  	{
+	  		title:'首页-展开评论1',//个人状态-展开评论
+	  		//http://status.renren.com/feedcommentretrieve.do
+	  		reg:/^http:\/\/status\.renren\.com\/feedcommentretrieve\.do///
+	  	},
+	  	{
+	  		title:'首页-展开评论2',
+	  		//http://page.renren.com/600002874/album/replyList 主页相册
+	  		//http://page.renren.com/699153758/note/replyList 主页日志
+			//http://page.renren.com/doing/replyList 主页状态-展开的异步评论
+	  		reg:/^http:\/\/page\.renren\.com\/(\d{9}\/(album|note)|doing)\/replyList///
+	  	},
+	  	{
+	  		title:'首页-新鲜事',
+	  		reg:/http:\/\/www\.renren\.com\/feedretrieve2\.do/
+	  	},
+	  	{
+	  		title:'小站',//“较早的评论”
+	  		reg:/http:\/\/zhan\.renren\.com\/.*\/\d+\/comment\/list/
+	  	},
+	  	{
+	  		title:'我的分享-评论',
+	  		reg:/http:\/\/share\.renren\.com\/share\/showcomment\.do/
+	  	},
+	  	{
+	  		title:'他人的分享-评论',
+	  		reg:/http:\/\/share\.renren\.com\/share\/getmorecomment\.do/
+	  	},
+	  	{
+	  		title:'他人的视频分享-显示较早之前的评论',
+	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/moreurlcomment/
+	  	},
+	  	{
+	  		title:'我的分享-列表-异步评论',
+	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/getcomments/
+	  	}
+	  	,{//http://gossip.renren.com/ajaxgossiplist.do
+	  		title:'留言板翻页',
+	  		reg:/http:\/\/gossip\.renren\.com\/ajaxgossiplist\.do/
+	  	}
+	  	,{
+	  		title:'公共主页-相册',
+	  		reg:/http:\/\/page\.renren\.com\/ajaxcomment\/list/
+	  	}
+];
+
 //异步加载
 chrome.webRequest.onCompleted.addListener(
   function(details){
-  	var url = details.url ,
-  		//http://photo.renren.com/photo/105663055/photo-5733354611/ajax
-  		regPhoto = new RegExp(/^http:\/\/photo\.renren\.com\/photo\/\d{9}\/.+\/ajax/),//相册
-  		//http://status.renren.com/feedcommentretrieve.do
-  		regCmt1 = new RegExp(/^http:\/\/status\.renren\.com\/feedcommentretrieve\.do/),//首页-展开评论1
-  		//http://page.renren.com/600002874/album/replyList 主页相册
-  		//http://page.renren.com/699153758/note/replyList 主页日志
-		//http://page.renren.com/doing/replyList 主页状态
-  		regCmt2 = new RegExp(/^http:\/\/page\.renren\.com\/(\d{9}\/(album|note)|doing)\/replyList/);//首页-展开评论2
-  		regCmt3 = new RegExp(/http:\/\/www\.renren\.com\/feedretrieve2\.do/);//首页-新鲜事
-  		regCmt4 = new RegExp(/http:\/\/zhan\.renren\.com\/.*\/\d+\/comment\/list/);//小站
-  		regCmt5 = new RegExp(/http:\/\/share\.renren\.com\/share\/showcomment\.do/);//我的分享-评论
-  		regCmt6 = new RegExp(/http:\/\/share\.renren\.com\/share\/getmorecomment\.do/);//他人的分享-评论
-  		regCmt7 = new RegExp(/http:\/\/share\.renren\.com\/share\/comment\/moreurlcomment/);//他人的视频分享-显示较早之前的评论
-
-  	if ( regPhoto.test(url) || regCmt1.test(url) || regCmt2.test(url) || regCmt3.test(url) || regCmt4.test(url) || regCmt5.test(url) || regCmt6.test(url) || regCmt7.test(url) ) {
-	  	chrome.tabs.executeScript(null, {file:"killer.js"});
+  	var url = details.url;
+  	for( var i = 0 , len = asynchReqSet.length; i < len ; i++ ){
+  		if( asynchReqSet[i].reg.test( url ) ){
+  			console.log('synch-title:' + asynchReqSet[i].title + '-' + url );//调试信息
+		  	chrome.tabs.executeScript(null, {file:"killer.js"});
+		  	break;
+  		}
   	}
   }, {urls: ["http://*.renren.com/*"]}
 );
