@@ -6,7 +6,7 @@
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
 版本：1.3.2
-更新：2013年4月24日 16:09:50
+更新：2013年5月11日 17:40:17
 */
 var isOpen = true;
 //词库目前不够智能，向误伤的孩纸表示哀怜，后续会更新成动态词库 -Sigma
@@ -85,10 +85,10 @@ var pageSet = [
 		reg:/http:\/\/blog\.renren\.com\/share\/\d{9}/,
 		selector:{item:'#cmtsListCon>div.replies div.statuscmtitem.clearfix',cmt:'span.replycontent'}
 	}
-	,{//1.3.1
+	,{//1.3.2-http://photo.renren.com/photo/257526368/photo-5604034552
 		title:'个人相册',//图片列表、图片详情
 		reg:/http:\/\/photo\.renren\.com\/photo\/\d{9}/,
-		selector:{item:'div.replies dl.replies dd',cmt:'p.content'}
+		selector:{item:'div.replies dl.replies dd:not([class^="digger"])' ,cmt:'p.content'}
 	}
 ];
 
@@ -115,6 +115,7 @@ function killer(){
 		}
 	}
 }
+
 function setKilledNum(n) {//设置回显个数
 	chrome.extension.sendRequest({
 		action: "setKilledNum",
@@ -142,9 +143,11 @@ function superKiller( json ){
 					// var	cmt = item.querySelector( cmtSelector ).innerHTML;
 					var	cmt = item.querySelector( cmtSelector ).innerText;
 					// console.log( cmt );//调试打印
-					if( filter( cmt ) ){
-						howToTreatSB( item , i , cmt );
-						killedNum ++;
+					if( cmt ){
+						if( filter( cmt ) ){
+							howToTreatSB( item , i , cmt );
+							killedNum ++;
+						}
 					}
 					item.setAttribute("rrsb",1);//标记处理
 					len_curScan++;
@@ -159,10 +162,10 @@ function superKiller( json ){
 	}catch( e ){
 		var url = encodeURIComponent( window.location.href ),
 			error =  encodeURIComponent( e.toString() );
-			if( !+localStorage.getItem( url ) ){
-				localStorage.setItem( url , 1 );
-				report( 'url=' + url + '&error=' + error );
-			}
+		if( !+localStorage.getItem( url ) ){
+			localStorage.setItem( url , 1 );
+			report( 'url=' + url + '&error=' + error );
+		}
 	}
 }
 
