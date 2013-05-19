@@ -8,6 +8,7 @@
 版本：1.3.2
 更新：2013年5月11日 17:40:17
 */
+var VERSION = '1.3.2';
 var isOpen = true;
 //词库目前不够智能，向误伤的孩纸表示哀怜，后续会更新成动态词库 -Sigma
 var SBWORD = [
@@ -110,7 +111,7 @@ function killer(){
 		var curPage = pageSet[i];
 		if( curPage.reg.test(curURL)){
 			_log( curPage.title );
-			superKiller( curPage.selector );
+			superKiller( curPage );
 			break;
 		}
 	}
@@ -130,8 +131,9 @@ function setKilledNum(n) {//设置回显个数
 */
 function superKiller( json ){
 	try{
-		var itemSelector = json.item,
-			cmtSelector = json.cmt;
+		var curPage = json.selector,
+			itemSelector = curPage.item,
+			cmtSelector = curPage.cmt;
 		var items = document.querySelectorAll( itemSelector );
 		var len = items.length,
 			len_curScan = 0,//本次扫描个数
@@ -140,9 +142,7 @@ function superKiller( json ){
 			for( var i = 0 ; i < len ; i ++ ){
 				var item = items[i];
 				if ( item.getAttribute("rrsb") != 1 ) {
-					// var	cmt = item.querySelector( cmtSelector ).innerHTML;
 					var	cmt = item.querySelector( cmtSelector ).innerText;
-					// console.log( cmt );//调试打印
 					if( cmt ){
 						if( filter( cmt ) ){
 							howToTreatSB( item , i , cmt );
@@ -155,10 +155,18 @@ function superKiller( json ){
 			}			
 			setKilledNum( killedNum );
 			loger( len , killedNum, len_curScan );//日志输出
-		}/*else{
-			var url = encodeURIComponent( window.location.href );
-			report( 'url=' + url + '&error=' + 'noDataWasFound' );
-		}*/
+			dataCollector({
+				page: json.title,
+				total: len_curScan,
+				sb: killedNum,
+				msg:''
+			});
+		}else{
+			dataCollector( {
+				url : encodeURIComponent( window.location.href ) ,
+				msg : 'noDataWasFound' 
+			});
+		}
 	}catch( e ){
 		var url = encodeURIComponent( window.location.href ),
 			error =  encodeURIComponent( e.toString() );
@@ -171,6 +179,28 @@ function superKiller( json ){
 
 function report( msg ){
 	new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
+}
+
+/**
+ *处理结果收集，用于功能过期预警
+ *added 2013.05.19 ver1.3.2
+ */
+function dataCollector( json ){
+	if( localStorage ){
+		var prefix = getDay(),
+			itemName = prefix + '_' + window.location.href ;
+		if( !+localStorage.getItem( itemName ) ){
+			var paras = [];
+			json.uid = getId();
+			json.url = window.location.href;
+			json.ver = VERSION;
+			for ( var i in json ){
+				paras.push( i + '=' + encodeURIComponent( json[i] ) );
+			}
+			report( paras.join('&') );
+			localStorage.setItem( itemName , 1 );
+		}
+	}
 }
 
 function filter ( cmt ) {
@@ -219,8 +249,7 @@ function loger ( len , killedNum, len_curScan ) {
 	},function( response ){
 		var SBNumCurPage = response.SBNumCurPage;
 		console.log('【人人2B过滤器\'s log】');
-		console.log('当前地址：' + window.location.href);
-		// console.log('扫描个数：' + len);
+		console.log('当前地址：' + window.location.href );
 		console.log('本页 SB ：' + SBNumCurPage + '/' + len );
 		console.log('本次 SB ：' + killedNum + '/' + len_curScan );
 		console.log('用户反馈：http://rrurl.cn/hM9mhk');
@@ -241,6 +270,26 @@ function getTime() {
 	s = d.getSeconds();
 	str = h + ':' + (m < 10 ? '0' + m: m) + ':' + (s < 10 ? '0' + s: s );
 	return str;
+}
+
+function getDay(){
+	var t = '',
+	d = new Date(),
+	y = d.getFullYear(),
+	m = d.getMonth()+1,
+	da = d.getDate();
+
+	t = t + y + '-' + m + '-' + da;
+	return t;
+}
+
+function getId(){
+	var index = document.querySelector('#navBar .nav-main .menu-title a');
+	if( index ){
+		href = index.href;
+		return href.replace(/http:\/\/.*\..*\.com\//,'')
+	}
+	return '';
 }
 
 function getChinese( str ) {
