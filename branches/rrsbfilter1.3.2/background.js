@@ -5,8 +5,8 @@
 微信：rrsbfilter
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
-版本：1.3.1
-更新：2013年4月16日 16:54:50
+版本：1.3.2
+更新：2013年5月20日 00:47:48
 */
 var isOpen = true ,
 	DELAY_POPICON = 2000,
@@ -88,8 +88,12 @@ var asynchReqSet = [
 	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/getcomments/
 	  	}
 	  	,{//http://gossip.renren.com/ajaxgossiplist.do
-	  		title:'留言板翻页',
+	  		title:'留言板-好友',
 	  		reg:/http:\/\/gossip\.renren\.com\/ajaxgossiplist\.do/
+	  	}
+	  	,{//http://gossip.renren.com/getconversation.do
+	  		title:'留言板-个人',
+	  		reg:/http:\/\/gossip\.renren\.com\/getconversation\.do/
 	  	}
 	  	,{
 	  		title:'公共主页-相册',

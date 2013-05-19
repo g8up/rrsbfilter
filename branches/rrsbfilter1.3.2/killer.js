@@ -6,7 +6,7 @@
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
 版本：1.3.2
-更新：2013年5月11日 17:40:17
+更新：2013年5月20日 00:47:24
 */
 var VERSION = '1.3.2';
 var isOpen = true;
@@ -47,8 +47,13 @@ var pageSet = [
 		selector:{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'}//2013.04.16
 	}
 	,{
-		title:'留言板',
+		title:'留言板-好友',
 		reg:/http:\/\/gossip\.renren\.com\/getgossiplist\.do\?id=\d{9}/,
+		selector:{item:'#talk .cmt-body',cmt:'div.text-content'}
+	}
+	,{
+		title:'留言板-个人',
+		reg:/http:\/\/gossip\.renren\.com\/.*/,
 		selector:{item:'#talk .cmt-body',cmt:'div.text-content'}
 	}
 	,{//1.3.1 http://page.renren.com/699153758/note/813996479
