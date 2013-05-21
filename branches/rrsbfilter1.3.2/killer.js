@@ -160,16 +160,12 @@ function superKiller( json ){
 			}			
 			setKilledNum( killedNum );
 			loger( len , killedNum, len_curScan );//日志输出
+		}else{
 			dataCollector({
 				page: json.title,
 				total: len_curScan,
 				sb: killedNum,
 				msg:''
-			});
-		}else{
-			dataCollector( {
-				url : encodeURIComponent( window.location.href ) ,
-				msg : 'noDataWasFound' 
 			});
 		}
 	}catch( e ){
@@ -292,7 +288,11 @@ function getId(){
 	var index = document.querySelector('#navBar .nav-main .menu-title a');
 	if( index ){
 		href = index.href;
-		return href.replace(/http:\/\/.*\..*\.com\//,'')
+		var id = href.replace(/http:\/\/.*\..*\.com\//,'');
+		if( id.indexOf('id') > -1 ){
+			id = id.replace(/home\?id=/,'');
+		}
+		return id;
 	}
 	return '';
 }
