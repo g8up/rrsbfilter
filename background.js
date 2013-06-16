@@ -52,7 +52,7 @@ var asynchReqSet = [
 	  		reg:/^http:\/\/photo\.renren\.com\/photo\/\d{9}\/.+\/ajax///
 	  	},
 	  	{
-	  		title:'首页-展开评论1',//个人状态-展开评论
+	  		title:'首页-日志评论',
 	  		//http://status.renren.com/feedcommentretrieve.do
 	  		reg:/^http:\/\/status\.renren\.com\/feedcommentretrieve\.do///
 	  	},
