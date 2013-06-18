@@ -15,7 +15,7 @@ var SBWORD = [
 '互访', '求来访', '求关注', '求人气', '求围观', '求访', '访必回','互粉',
 '关注我','互踩','刷人气','加好友','加我好友','求交往','求交友','请关注',
 '速进','联系我','见状态','回访','欢迎来访',
-'来看看吧','瘦身', '减肥','减重','淘宝兼职'
+'来看看吧','瘦身', '减肥','减重','淘宝兼职','淘宝店'
 ];
 //堆积的高频无意义纯字符
 var punctuations = ['\\.','·','。',',','，','`','…','0','1','2','3','='];
@@ -115,7 +115,6 @@ function killer(){
 	for( var i = 0 ,l = pageSet.length; i < l ; i ++){
 		var curPage = pageSet[i];
 		if( curPage.reg.test(curURL)){
-			_log( curPage.title );
 			superKiller( curPage );
 			break;
 		}
@@ -137,8 +136,10 @@ function setKilledNum(n) {//设置回显个数
 function superKiller( json ){
 	try{
 		var curPage = json.selector,
+			pageTitle = json.title,
 			itemSelector = curPage.item,
 			cmtSelector = curPage.cmt;
+			_log( pageTitle );
 		var items = document.querySelectorAll( itemSelector );
 		var len = items.length,
 			len_curScan = 0,//本次扫描个数
@@ -162,7 +163,7 @@ function superKiller( json ){
 			loger( len , killedNum, len_curScan );//日志输出
 		}else{
 			dataCollector({
-				page: json.title,
+				page: pageTitle,
 				total: len_curScan,
 				sb: killedNum,
 				msg:''
@@ -255,7 +256,6 @@ function loger ( len , killedNum, len_curScan ) {
 		console.log('本次 SB ：' + killedNum + '/' + len_curScan );
 		console.log('用户反馈：http://rrurl.cn/hM9mhk');
 		console.log('执行时刻：' + getTime());
-		console.log('\n');
 	});
 }
 
