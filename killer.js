@@ -5,9 +5,10 @@
 微信：rrsbfilter
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
-版本：1.3.1
-更新：2013年4月16日 14:52:39
+版本：1.3.2
+更新：2013年5月20日 00:47:24
 */
+var VERSION = '1.3.2';
 var isOpen = true;
 //词库目前不够智能，向误伤的孩纸表示哀怜，后续会更新成动态词库 -Sigma
 var SBWORD = [
@@ -46,8 +47,13 @@ var pageSet = [
 		selector:{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'}//2013.04.16
 	}
 	,{
-		title:'留言板',
+		title:'留言板-好友',
 		reg:/http:\/\/gossip\.renren\.com\/getgossiplist\.do\?id=\d{9}/,
+		selector:{item:'#talk .cmt-body',cmt:'div.text-content'}
+	}
+	,{
+		title:'留言板-个人',
+		reg:/http:\/\/gossip\.renren\.com\/.*/,
 		selector:{item:'#talk .cmt-body',cmt:'div.text-content'}
 	}
 	,{//1.3.1 http://page.renren.com/699153758/note/813996479
@@ -85,10 +91,10 @@ var pageSet = [
 		reg:/http:\/\/blog\.renren\.com\/share\/\d{9}/,
 		selector:{item:'#cmtsListCon>div.replies div.statuscmtitem.clearfix',cmt:'span.replycontent'}
 	}
-	,{//1.3.1
+	,{//1.3.2-http://photo.renren.com/photo/257526368/photo-5604034552
 		title:'个人相册',//图片列表、图片详情
 		reg:/http:\/\/photo\.renren\.com\/photo\/\d{9}/,
-		selector:{item:'div.replies dl.replies dd',cmt:'p.content'}
+		selector:{item:'div.replies dl.replies dd:not([class^="digger"])' ,cmt:'p.content'}
 	}
 ];
 
@@ -110,11 +116,12 @@ function killer(){
 		var curPage = pageSet[i];
 		if( curPage.reg.test(curURL)){
 			_log( curPage.title );
-			superKiller( curPage.selector );
+			superKiller( curPage );
 			break;
 		}
 	}
 }
+
 function setKilledNum(n) {//设置回显个数
 	chrome.extension.sendRequest({
 		action: "setKilledNum",
@@ -129,8 +136,9 @@ function setKilledNum(n) {//设置回显个数
 */
 function superKiller( json ){
 	try{
-		var itemSelector = json.item,
-			cmtSelector = json.cmt;
+		var curPage = json.selector,
+			itemSelector = curPage.item,
+			cmtSelector = curPage.cmt;
 		var items = document.querySelectorAll( itemSelector );
 		var len = items.length,
 			len_curScan = 0,//本次扫描个数
@@ -139,12 +147,12 @@ function superKiller( json ){
 			for( var i = 0 ; i < len ; i ++ ){
 				var item = items[i];
 				if ( item.getAttribute("rrsb") != 1 ) {
-					// var	cmt = item.querySelector( cmtSelector ).innerHTML;
 					var	cmt = item.querySelector( cmtSelector ).innerText;
-					// console.log( cmt );//调试打印
-					if( filter( cmt ) ){
-						howToTreatSB( item , i , cmt );
-						killedNum ++;
+					if( cmt ){
+						if( filter( cmt ) ){
+							howToTreatSB( item , i , cmt );
+							killedNum ++;
+						}
 					}
 					item.setAttribute("rrsb",1);//标记处理
 					len_curScan++;
@@ -152,17 +160,21 @@ function superKiller( json ){
 			}			
 			setKilledNum( killedNum );
 			loger( len , killedNum, len_curScan );//日志输出
-		}/*else{
-			var url = encodeURIComponent( window.location.href );
-			report( 'url=' + url + '&error=' + 'noDataWasFound' );
-		}*/
+		}else{
+			dataCollector({
+				page: json.title,
+				total: len_curScan,
+				sb: killedNum,
+				msg:''
+			});
+		}
 	}catch( e ){
 		var url = encodeURIComponent( window.location.href ),
 			error =  encodeURIComponent( e.toString() );
-			if( !+localStorage.getItem( url ) ){
-				localStorage.setItem( url , 1 );
-				report( 'url=' + url + '&error=' + error );
-			}
+		if( !+localStorage.getItem( url ) ){
+			localStorage.setItem( url , 1 );
+			report( 'url=' + url + '&error=' + error );
+		}
 	}
 }
 
@@ -170,8 +182,30 @@ function report( msg ){
 	new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
 }
 
+/**
+ *处理结果收集，用于功能过期预警
+ *added 2013.05.19 ver1.3.2
+ */
+function dataCollector( json ){
+	if( localStorage ){
+		var prefix = getDay(),
+			itemName = prefix + '_' + window.location.href ;
+		if( !+localStorage.getItem( itemName ) ){
+			var paras = [];
+			json.uid = getId();
+			json.url = window.location.href;
+			json.ver = VERSION;
+			for ( var i in json ){
+				paras.push( i + '=' + encodeURIComponent( json[i] ) );
+			}
+			report( paras.join('&') );
+			localStorage.setItem( itemName , 1 );
+		}
+	}
+}
+
 function filter ( cmt ) {
-	var _cmt = trim (cmt),
+	var _cmt = cmt.trim(),
 		comm = getChinese( _cmt );
 	if (comm == '') {//没有中文
 		return punctuationFilter( _cmt );
@@ -207,7 +241,7 @@ function howToTreatSB( SBNode , i , cmt ){
 			clearInterval( tBlur );
 		}
 	},400);
-	_log( i + 'sb:' + trim(cmt));
+	_log( i + 'sb:' + cmt.trim() );
 }
 
 function loger ( len , killedNum, len_curScan ) {
@@ -216,8 +250,7 @@ function loger ( len , killedNum, len_curScan ) {
 	},function( response ){
 		var SBNumCurPage = response.SBNumCurPage;
 		console.log('【人人2B过滤器\'s log】');
-		console.log('当前地址：' + window.location.href);
-		// console.log('扫描个数：' + len);
+		console.log('当前地址：' + window.location.href );
 		console.log('本页 SB ：' + SBNumCurPage + '/' + len );
 		console.log('本次 SB ：' + killedNum + '/' + len_curScan );
 		console.log('用户反馈：http://rrurl.cn/hM9mhk');
@@ -240,8 +273,28 @@ function getTime() {
 	return str;
 }
 
-function trim( str ) {
-	 return str.replace( /(^\s*)|(\s*$)/g , "" );
+function getDay(){
+	var t = '',
+	d = new Date(),
+	y = d.getFullYear(),
+	m = d.getMonth()+1,
+	da = d.getDate();
+
+	t = t + y + '-' + m + '-' + da;
+	return t;
+}
+
+function getId(){
+	var index = document.querySelector('#navBar .nav-main .menu-title a');
+	if( index ){
+		href = index.href;
+		var id = href.replace(/http:\/\/.*\..*\.com\//,'');
+		if( id.indexOf('id') > -1 ){
+			id = id.replace(/home\?id=/,'');
+		}
+		return id;
+	}
+	return '';
 }
 
 function getChinese( str ) {
