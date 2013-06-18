@@ -1,0 +1,38 @@
+{
+	"manifest_version": 2,
+	"background": { "page":"background.html" },
+	"permissions": [
+		"tabs",
+		"webRequest",
+		"http://*.sinaapp.com/*",
+		"http://*.renren.com/*",
+		"http://*.g8up.cn/*",
+		"http://*.g8up.com/*",
+		"http://*.duxing.org/*"
+	],
+	"content_scripts": [
+		{
+			"js": [
+				"killer.js"
+			],
+			"matches": [
+				"http://*.renren.com/*"
+			]
+		}
+	],
+	"browser_action": {
+		"name": "人人2B过滤器",
+		"default_icon": "logo48.png"
+	},
+	"icons": {
+		"48": "logo48.png",
+		"128": "logo128.png"
+	},
+	"key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCM7U+nsjD3482QRcOw0/ae86N1HxOj9+hBqMIdA5vdNHIWksOcFzS2w/+dDnpHgGQLFo/5s5HorXTnT0cBv1s32chiA4GGUTw1vHCm6DQjArBpqwoQo1ZHx7Slx3NvfFF36sAxde3Fz+v5J/TPyQHo37bYBT7oEgLM5rYzr22kRQIDAQAB",
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+	"update_url":"http://xuediannao.sinaapp.com/chrome/rrsbfilter/update.xml",
+	"name": "人人2B过滤器（文艺青年必备）",
+	"description": "描述：一个清理校内2B无聊评论（如\"互访\",\"求关注\"）的小清新插件，哼！微信号：rrsbfilter",
+	"homepage_url":"http://g8up.cn/chrome/rrsbfilter/?via=1.3.2",
+	"version": "1.3.2"
+}
