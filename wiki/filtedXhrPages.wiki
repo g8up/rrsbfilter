@@ -7,3 +7,7 @@
   http://photo.renren.com/photo/feedcommentretrieve.do
  # 分享照片 更多回复
   http://status.renren.com/feedcommentretrieve.do
+
+==公共主页==
+ #图片分享 查看回复
+  http://page.renren.com/600990645/photo/replyList
