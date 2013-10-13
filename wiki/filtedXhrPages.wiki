@@ -5,7 +5,9 @@
 
 ==我==
  # 日志评论
-http://status.renren.com/feedcommentretrieve.do
+  http://status.renren.com/feedcommentretrieve.do
+ # 查看回复（新鲜事评论）
+  http://page.renren.com/doing/replyList 
 ==好友==
  # 图片状态 还有N条回复 日期2013.10.14
   http://photo.renren.com/photo/feedcommentretrieve.do
