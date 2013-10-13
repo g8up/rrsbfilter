@@ -8,9 +8,9 @@
 http://status.renren.com/feedcommentretrieve.do
 ==好友==
  # 图片状态 还有N条回复 日期2013.10.14
- http://photo.renren.com/photo/feedcommentretrieve.do
+  http://photo.renren.com/photo/feedcommentretrieve.do
  # 分享照片 更多回复
- http://status.renren.com/feedcommentretrieve.do
+  http://status.renren.com/feedcommentretrieve.do
 
 ==公共主页==
  # 图片分享 查看回复
