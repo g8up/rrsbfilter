@@ -1,4 +1,4 @@
 ==首页==
 
- # 好友的图片状态 更多回复
+ # 好友的图片状态 更多回复 日期2013.10.14
   http://photo.renren.com/photo/feedcommentretrieve.do
