@@ -78,12 +78,16 @@ var asynchReqSet = [
 	  		reg:/http:\/\/share\.renren\.com\/share\/showcomment\.do/
 	  	},
 	  	{
-	  		title:'他人的分享-评论',
+	  		title:'好友的分享-评论',
 	  		reg:/http:\/\/share\.renren\.com\/share\/getmorecomment\.do/
 	  	},
 	  	{
-	  		title:'他人的视频分享-显示较早之前的评论',
+	  		title:'好友的视频分享-显示较早之前的评论',
 	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/moreurlcomment/
+	  	},
+	  	{//added by 1.3.3
+	  		title:'首页-好友-图片动态-还有N条回复',
+	  		reg:/http:\/\/photo\.renren\.com\/photo\/feedcommentretrieve\.do/
 	  	},
 	  	{
 	  		title:'我的分享-列表-异步评论',
