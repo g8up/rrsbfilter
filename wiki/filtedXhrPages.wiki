@@ -1,14 +1,4 @@
-#summary renren.com动态拉取的信息请求
-
-= Introduction =
-
-Add your content here.
-
-
-= Details =
-
-
 ==首页==
 
-#好友的图片状态 更多回复
- http://photo.renren.com/photo/feedcommentretrieve.do
+# 好友的图片状态 更多回复
+  http://photo.renren.com/photo/feedcommentretrieve.do
