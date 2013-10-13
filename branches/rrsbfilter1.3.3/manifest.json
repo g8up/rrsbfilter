@@ -1,6 +1,6 @@
 {
 	"manifest_version": 2,
-	"background": { "page":"background.html" },
+	"background": { "scripts":["background.js"] },
 	"permissions": [
 		"tabs",
 		"webRequest",
@@ -33,6 +33,6 @@
 	"update_url":"http://xuediannao.sinaapp.com/chrome/rrsbfilter/update.xml",
 	"name": "人人2B过滤器（文艺青年必备）",
 	"description": "描述：一个清理校内2B无聊评论（如\"互访\",\"求关注\"）的小清新插件，哼！微信号：rrsbfilter",
-	"homepage_url":"http://g8up.cn/chrome/rrsbfilter/?via=1.3.2",
-	"version": "1.3.2"
+	"homepage_url":"http://g8up.cn/chrome/rrsbfilter/?via=1.3.3",
+	"version": "1.3.3"
 }
