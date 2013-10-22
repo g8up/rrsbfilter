@@ -8,5 +8,5 @@
 = Details =
 
 
- # 个人相册
+ # 个人相册 （added 1.3.2 ）
   http://photo.renren.com/photo/257526368/photo-5604034552
