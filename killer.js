@@ -5,8 +5,8 @@
 微信：rrsbfilter
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
-版本：1.3.2
-更新：2013年5月20日 00:47:24
+版本：1.3.3
+更新：2013年10月22日 14:54:12
 */
 var VERSION = '1.3.2';
 var isOpen = true;
@@ -15,7 +15,8 @@ var SBWORD = [
 '互访', '求来访', '求关注', '求人气', '求围观', '求访', '访必回','互粉',
 '关注我','互踩','刷人气','加好友','加我好友','求交往','求交友','请关注',
 '速进','联系我','见状态','回访','欢迎来访',
-'来看看吧','瘦身', '减肥','减重','淘宝兼职','淘宝店'
+'来看看吧','瘦身', '减肥','减重','淘宝兼职','淘宝店',
+'taobao\.com'
 ];
 //堆积的高频无意义纯字符
 var punctuations = ['\\.','·','。',',','，','`','…','0','1','2','3','='];
@@ -29,7 +30,7 @@ var pageSet = [
 		title:'个人状态',//所有状态(未解决)
 		reg:/http:\/\/www\.renren\.com\/\d{9}#\/\/status\/status/,
 		// selector:{item:'div.nomore div.statuscmtitem',cmt:'span.replycontent'}
-		selector:{item:'div.statuscmtlist div.statuscmtitem',cmt:'span.replycontent'}
+		selector:{item:'div.statuscmtlist>div:not([class~="reply-adding"]',cmt:'span.replycontent'}
 	}
 	,{//1.3.1
 		title:'首页',
@@ -91,7 +92,7 @@ var pageSet = [
 		reg:/http:\/\/blog\.renren\.com\/share\/\d{9}/,
 		selector:{item:'#cmtsListCon>div.replies div.statuscmtitem.clearfix',cmt:'span.replycontent'}
 	}
-	,{//1.3.2-http://photo.renren.com/photo/257526368/photo-5604034552
+	,{
 		title:'个人相册',//图片列表、图片详情
 		reg:/http:\/\/photo\.renren\.com\/photo\/\d{9}/,
 		selector:{item:'div.replies dl.replies dd:not([class^="digger"])' ,cmt:'p.content'}
@@ -140,7 +141,7 @@ function superKiller( json ){
 			itemSelector = curPage.item,
 			cmtSelector = curPage.cmt;
 			_log( pageTitle );
-		var items = document.querySelectorAll( itemSelector );
+		var items = document.querySelectorAll( itemSelector + ':not([rrsb])' );
 		var len = items.length,
 			len_curScan = 0,//本次扫描个数
 			killedNum = 0;//本次sb
