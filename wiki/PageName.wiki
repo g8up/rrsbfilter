@@ -3,10 +3,13 @@
 = Introduction =
 
 含有评论检查内容的静态页面地址实例汇总
-
+xhr:动态（异步）请求
 
 = Details =
 
+ # 我的状态
+  * 状态回复（xhr）
+    http://status.renren.com/feedcommentretrieve.do
 
  # 个人相册 （added 1.3.2 ）
   http://photo.renren.com/photo/257526368/photo-5604034552
