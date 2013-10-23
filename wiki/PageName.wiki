@@ -3,6 +3,7 @@
 = Introduction =
 
 含有评论检查内容的静态页面地址实例汇总
+
 xhr:动态（异步）请求
 
 = Details =
