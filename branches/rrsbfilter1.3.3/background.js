@@ -6,7 +6,7 @@
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
 版本：1.3.3
-更新：2013年10月22日 14:54:26
+更新：2013年12月4日 19:08:44
 */
 var isOpen = true ,
 	DELAY_POPICON = 2000,
