@@ -11,13 +11,13 @@
 var isOpen = true ,
 	DELAY_POPICON = 2000,
 	DELAY_KILLEDICON = 5000,
+	scanCount = 0,//检测总数
 	SBNumCurPage = 0;
-
 chrome.extension.onRequest.addListener(
 	function(request, sender, sendResponse) {
 		switch( request.action ){
 			case 'getIsOpen':
-				sendResponse({isOpen: isOpen});
+				sendResponse({'isOpen': isOpen});
 				break;
 			case 'setKilledNum':
 				if( parseInt(request.killedNum) > 0 ){
@@ -28,9 +28,10 @@ chrome.extension.onRequest.addListener(
 					removeBadge( DELAY_KILLEDICON );
 				}
 				SBNumCurPage += parseInt(request.killedNum);//累加
+				scanCount += parseInt( request.scanCount );
 				break;
-			case 'getSBNumCurPage':
-				sendResponse({SBNumCurPage: SBNumCurPage});
+			case 'getResultData':
+				sendResponse({SBNumCurPage: SBNumCurPage,scanCount:scanCount});
 				break;
 			default:break;
 		}
@@ -114,7 +115,7 @@ chrome.webRequest.onCompleted.addListener(
   	for( var i = 0 , len = asynchReqSet.length; i < len ; i++ ){
   		if( asynchReqSet[i].reg.test( url ) ){
   			console.log('synch-title:' + asynchReqSet[i].title + '-' + url );//调试信息
-		  	chrome.tabs.executeScript(null, {file:"killer.js"});
+		  	chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
 		  	break;
   		}
   	}

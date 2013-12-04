@@ -122,10 +122,11 @@ function killer(){
 	}
 }
 
-function setKilledNum(n) {//设置回显个数
+function setKilledNum( killedNum , scanCount ) {//设置回显个数
 	chrome.extension.sendRequest({
 		action: "setKilledNum",
-		killedNum: n + ''
+		killedNum: killedNum + '',
+		scanCount: scanCount
 	});
 }
 /*
@@ -140,32 +141,32 @@ function superKiller( json ){
 			pageTitle = json.title,
 			itemSelector = curPage.item,
 			cmtSelector = curPage.cmt;
-			_log( pageTitle );
 		var items = document.querySelectorAll( itemSelector + ':not([rrsb])' );
 		var len = items.length,
-			len_curScan = 0,//本次扫描个数
+			curScanCount = 0,//本次扫描个数
 			killedNum = 0;//本次sb
 		if( len > 0 ){
 			for( var i = 0 ; i < len ; i ++ ){
 				var item = items[i];
-				if ( item.getAttribute("rrsb") != 1 ) {
-					var	cmt = item.querySelector( cmtSelector ).innerText;
+				var cmtNode = item.querySelector( cmtSelector );
+				if( cmtNode ){
+					var	cmt = cmtNode.innerText;
 					if( cmt ){
 						if( filter( cmt ) ){
 							howToTreatSB( item , i , cmt );
 							killedNum ++;
 						}
 					}
-					item.setAttribute("rrsb",1);//标记处理
-					len_curScan++;
+					item.setAttribute("rrsb",1);
+					curScanCount++;
 				}
-			}			
-			setKilledNum( killedNum );
-			loger( len , killedNum, len_curScan );//日志输出
+			}
+			setKilledNum( killedNum , curScanCount );
+			loger( len , killedNum, curScanCount , pageTitle );
 		}else{
 			dataCollector({
 				page: pageTitle,
-				total: len_curScan,
+				total: curScanCount,
 				sb: killedNum,
 				msg:''
 			});
@@ -181,7 +182,7 @@ function superKiller( json ){
 }
 
 function report( msg ){
-	new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
+	// new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
 }
 
 /**
@@ -233,7 +234,7 @@ function punctuationFilter( cmt ){//过滤符号堆积的评论
 		}
 		return false;
 }
-
+var SBCmt = [];
 function howToTreatSB( SBNode , i , cmt ){
 	var n = 30 ,
 		tBlur  = setInterval(function(){
@@ -243,20 +244,27 @@ function howToTreatSB( SBNode , i , cmt ){
 			clearInterval( tBlur );
 		}
 	},400);
-	_log( i + 'sb:' + cmt.trim() );
+	SBCmt.push( { '屁':cmt.trim() } );
 }
 
-function loger ( len , killedNum, len_curScan ) {
+function loger ( len , killedNum, curScanCount, pageTitle ) {
 	chrome.extension.sendRequest({
-		action: "getSBNumCurPage"
+		action: "getResultData"
 	},function( response ){
-		var SBNumCurPage = response.SBNumCurPage;
-		console.log('【人人2B过滤器\'s log】');
-		console.log('当前地址：' + window.location.href );
-		console.log('本页 SB ：' + SBNumCurPage + '/' + len );
-		console.log('本次 SB ：' + killedNum + '/' + len_curScan );
-		console.log('用户反馈：http://rrurl.cn/hM9mhk');
-		console.log('执行时刻：' + getTime());
+		var SBNumCurPage = response.SBNumCurPage,
+		scanCount = response.scanCount;
+		console.log(
+			'【人人2B过滤器\'s log】',
+			'\n当前页面：' + pageTitle + ' '+ window.location.href,
+			'\n本次 SB ：' + killedNum + '/' + curScanCount ,
+			'\n本页 SB ：' + SBNumCurPage + '/' + scanCount ,
+			'\n用户反馈：http://rrurl.cn/hM9mhk',
+			'\n执行时刻：' + getTime()
+		);
+		if( SBCmt.length ){
+			console.table( SBCmt );
+			SBCmt.length = 0;
+		}
 	});
 }
 
