@@ -100,10 +100,7 @@ var pageSet = [
 ];
 
 chrome.extension.sendRequest({action: "getIsOpen"},function(response) {
-	isOpen = response.isOpen;
-	if (isOpen) {
-		killer();
-	}
+	response.isOpen && killer();
 });
 
 function killer(){
@@ -118,18 +115,19 @@ function killer(){
 }
 
 function setKilledNum( killedNum , scanCount ) {//设置回显个数
+	var body = document.querySelector('body');
+	body.setAttribute('rrsb_scancount', (body.getAttribute('rrsb_scancount')||0) + scanCount );
+	body.setAttribute('rrsb_killednum', (body.getAttribute('rrsb_killednum')||0) + scanCount );
+
 	chrome.extension.sendRequest({
 		action: "setKilledNum",
-		killedNum: killedNum + '',
-		scanCount: scanCount
+		killedNum: killedNum + ''
 	});
 }
-/*
-{
+/*{
 	item:containerId,容器id和item标签名，如'#comment_list dd'
 	cmt:commentId  评论内容标签名，如'p.content span'
-}
-*/
+}*/
 function superKiller( json ){
 	try{
 		var curPage = json.selector,
@@ -157,7 +155,7 @@ function superKiller( json ){
 				}
 			}
 			setKilledNum( killedNum , curScanCount );
-			loger( len , killedNum, curScanCount , pageTitle );
+			loger( killedNum, curScanCount , pageTitle );
 		}else{
 			dataCollector({
 				page: pageTitle,
@@ -242,17 +240,18 @@ function howToTreatSB( SBNode , i , cmt ){
 	SBCmt.push( { '屁':cmt.trim() } );
 }
 
-function loger ( len , killedNum, curScanCount, pageTitle ) {
-	chrome.extension.sendRequest({
-		action: "getResultData"
-	},function( response ){
-		var SBNumCurPage = response.SBNumCurPage,
-		scanCount = response.scanCount;
+function loger ( killedNum, curScanCount, pageTitle ) {
+	var body = document.querySelector('body');
+	// chrome.extension.sendRequest({
+	// 	action: "getResultData"
+	// },function( response ){
+		// var SBNumCurPage = response.SBNumCurPage,
+		// scanCount = response.scanCount;
 		console.log(
-			'【人人2B过滤器\'s log】',
+			'\n【人人2B过滤器\'s log】',
 			'\n当前页面：' + pageTitle + ' '+ window.location.href,
 			'\n本次 SB ：' + killedNum + '/' + curScanCount ,
-			'\n本页 SB ：' + SBNumCurPage + '/' + scanCount ,
+			'\n本页 SB ：' + body.getAttribute('rrsb_killednum') + '/' + body.getAttribute('rrsb_scancount') ,
 			'\n用户反馈：http://rrurl.cn/hM9mhk',
 			'\n执行时刻：' + getTime()
 		);
@@ -260,7 +259,7 @@ function loger ( len , killedNum, curScanCount, pageTitle ) {
 			console.table( SBCmt );
 			SBCmt.length = 0;
 		}
-	});
+	// });
 }
 
 function getTime() {
