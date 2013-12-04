@@ -27,12 +27,12 @@ chrome.extension.onRequest.addListener(
 					setBadge( request.killedNum + 'sb' ,  [0 , 255, 0, 100] );
 					removeBadge( DELAY_KILLEDICON );
 				}
-				SBNumCurPage += parseInt(request.killedNum);//累加
-				scanCount += parseInt( request.scanCount );
+				// SBNumCurPage += parseInt(request.killedNum);//累加
+				// scanCount += parseInt( request.scanCount );
 				break;
-			case 'getResultData':
-				sendResponse({SBNumCurPage: SBNumCurPage,scanCount:scanCount});
-				break;
+			// case 'getResultData':
+			// 	sendResponse({SBNumCurPage: SBNumCurPage,scanCount:scanCount});
+			// 	break;
 			default:break;
 		}
 	}
@@ -114,7 +114,7 @@ chrome.webRequest.onCompleted.addListener(
   	var url = details.url;
   	for( var i = 0 , len = asynchReqSet.length; i < len ; i++ ){
   		if( asynchReqSet[i].reg.test( url ) ){
-  			console.log('synch-title:' + asynchReqSet[i].title + '-' + url );//调试信息
+  			// console.log('synch-title:' + asynchReqSet[i].title + '-' + url );//调试信息
 		  	chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
 		  	break;
   		}
