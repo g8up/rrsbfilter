@@ -8,7 +8,7 @@
 版本：1.3.3
 更新：2013年12月4日 19:08:32
 */
-var VERSION = '1.3.2';
+var VERSION = '1.3.3';
 var isOpen = true;
 //词库目前不够智能，向误伤的孩纸表示哀怜，后续会更新成动态词库 -Sigma
 var SBWORD = [
@@ -43,9 +43,9 @@ var pageSet = [
 		selector:{item:'.feed-replies .a-reply',cmt:'p.text'}
 	}
 	,{
-		title:'个人日志',//验证页面http://blog.renren.com/blog/103433276/813554295
+		title:'个人日志',
 		reg:/http:\/\/blog\.renren\.com\/blog\/\d{9}\/.+/,
-		selector:{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'}//2013.04.16
+		selector:{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'}
 	}
 	,{
 		title:'留言板-好友',
@@ -57,7 +57,7 @@ var pageSet = [
 		reg:/http:\/\/gossip\.renren\.com\/.*/,
 		selector:{item:'#talk .cmt-body',cmt:'div.text-content'}
 	}
-	,{//1.3.1 http://page.renren.com/699153758/note/813996479
+	,{//1.3.1
 		title:'公共主页日志',//公共主页首页的子集，前置
 		reg:/http:\/\/page\.renren\.com\/.+\/note\/\d+/,
 		selector:{item:'#commentlist li',cmt:'div.text-content'}
@@ -68,7 +68,7 @@ var pageSet = [
 		selector:{item:'div.replies div.p-reply.clearfix',cmt:'p.text'}
 	}
 	,{//1.3.1
-		title:'公共主页首页',//http://page.renren.com/601257806?checked=true
+		title:'公共主页首页',
 		reg:/http:\/\/page\.renren\.com\/\d{9}/,
 		selector:{item:'.feed-replies .a-reply',cmt:'p.text'}//同个人主页
 	}
@@ -99,20 +99,15 @@ var pageSet = [
 	}
 ];
 
-chrome.extension.sendRequest({
-		action: "getIsOpen"
-	},
-	function(response) {
-		isOpen = response.isOpen;
-		if (isOpen) {
-			killer();
-		}
+chrome.extension.sendRequest({action: "getIsOpen"},function(response) {
+	isOpen = response.isOpen;
+	if (isOpen) {
+		killer();
 	}
-);
+});
 
 function killer(){
 	var curURL = window.location.href.toLowerCase();
-
 	for( var i = 0 ,l = pageSet.length; i < l ; i ++){
 		var curPage = pageSet[i];
 		if( curPage.reg.test(curURL)){
@@ -279,14 +274,11 @@ function getTime() {
 }
 
 function getDay(){
-	var t = '',
-	d = new Date(),
+	var d = new Date(),
 	y = d.getFullYear(),
 	m = d.getMonth()+1,
 	da = d.getDate();
-
-	t = t + y + '-' + m + '-' + da;
-	return t;
+	return y + '-' + m + '-' + da;
 }
 
 function getId(){
