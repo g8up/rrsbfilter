@@ -14,7 +14,7 @@ var isOpen = true;
 var SBWORD = [
 '互访', '求来访', '求关注', '求人气', '求围观', '求访', '访必回','互粉',
 '关注我','互踩','刷人气','加好友','加我好友','求交往','求交友','请关注',
-'速进','联系我','见状态','回访','欢迎来访',
+'速进','联系我','见状态','回访','欢迎来访','加微信',
 '来看看吧','瘦身', '减肥','减重','淘宝兼职','淘宝店',
 'taobao\.com'
 ];
@@ -66,6 +66,11 @@ var pageSet = [
 		reg:/http:\/\/page\.renren\.com\/\d{9}\/channel\-photoshow/,
 		selector:{item:'div.replies div.p-reply.clearfix',cmt:'p.text'}
 	}
+	,{//1.3.3
+		title:'公共主页相册2',
+		reg:/http:\/\/page\.renren\.com\/\d{9}\/photo\/\d+/,
+		selector:{item:'dl.replies dd',cmt:'p.content'}
+	}
 	,{//1.3.1
 		title:'公共主页首页',
 		reg:/http:\/\/page\.renren\.com\/\d{9}/,
@@ -115,8 +120,8 @@ function killer(){
 
 function setKilledNum( killedNum , scanCount ) {//设置回显个数
 	var body = document.querySelector('body');
-	body.setAttribute('rrsb_scancount', (body.getAttribute('rrsb_scancount')||0) + scanCount );
-	body.setAttribute('rrsb_killednum', (body.getAttribute('rrsb_killednum')||0) + killedNum );
+	body.setAttribute('rrsb_scancount', +(body.getAttribute('rrsb_scancount')||0) + scanCount );
+	body.setAttribute('rrsb_killednum', +(body.getAttribute('rrsb_killednum')||0) + killedNum );
 
 	chrome.extension.sendRequest({
 		action: "setKilledNum",
@@ -184,14 +189,16 @@ function dataCollector( json ){
 		var prefix = getDay(),
 		itemName   = prefix + '_' + window.location.href ;
 		if( !+localStorage.getItem( itemName ) ){
-			var paras = [];
 			json.uid  = getId();
-			json.url  = window.location.href;
-			json.ver  = VERSION;
-			for ( var i in json ){
-				paras.push( i + '=' + encodeURIComponent( json[i] ) );
+			if( json.uid ){
+				json.url  = window.location.href;
+				json.ver  = VERSION;
+				var paras = [];
+				for ( var i in json ){
+					paras.push( i + '=' + encodeURIComponent( json[i] ) );
+				}
+				report( paras.join('&') );
 			}
-			report( paras.join('&') );
 			localStorage.setItem( itemName , 1 );
 		}
 	}
@@ -245,11 +252,11 @@ function loger ( killedNum, curScanCount, pageTitle ) {
 		killedNumPage = body.getAttribute('rrsb_killednum')||0;
 	console.log(
 		'\n【人人2B过滤器\'s log】',
-		'\n当前页面：' + pageTitle + ' '+ window.location.href,
+		'\n' + pageTitle + '：'+ window.location.href,
 		'\n本次 SB ：' + killedNum + '/' + curScanCount ,
 		'\n本页 SB ：' + killedNumPage + '/' + scanCountPage,
 		'\n用户反馈：http://rrurl.cn/hM9mhk',
-		'\n执行时刻：' + getTime()
+		'\n执行时刻：' + getTime() + '\n'
 	);
 	if( SBCmt.length ){
 		console.table( SBCmt );

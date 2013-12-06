@@ -105,6 +105,14 @@ var asynchReqSet = [
 	  	,{
 	  		title:'公共主页-相册',
 	  		reg:/http:\/\/page\.renren\.com\/ajaxcomment\/list/
+	  	}	  	
+	  	,{
+	  		title:'公共主页-相册2',
+	  		reg:/http:\/\/page\.renren\.com\/ajaxgetphoto\.do/
+	  	}
+	  	,{
+	  		title:'公共主页-相册2-翻页',
+	  		reg:/http:\/\/page\.renren\.com\/ajaxgetphotocomment/
 	  	}
 ];
 
@@ -113,12 +121,16 @@ chrome.webRequest.onCompleted.addListener(function(details){
   	var url = details.url;
   	for( var i = 0 , len = asynchReqSet.length; i < len ; i++ ){
   		if( asynchReqSet[i].reg.test( url ) ){
-		  	chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
-  			console.log('synch-title:' + asynchReqSet[i].title , url );//调试信息
+  			clearTimeout( window['executeScriptTimer'] );
+		  	window['executeScriptTimer'] = setTimeout(function(){
+		  		chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
+	  			console.log('synch-title:' + asynchReqSet[i].title , url );//调试信息
+	  		},500);
 		  	break;
   		}
   	}
-}, {urls: ["http://*.renren.com/*"]});
+},
+{urls: ["http://*.renren.com/*"]});
 
 function getTime(){
 	var str = '',
