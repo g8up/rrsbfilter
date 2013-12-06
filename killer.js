@@ -6,7 +6,7 @@
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
 版本：1.3.3
-更新：2013年12月4日 19:08:32
+更新：2013年12月7日 03:05:41
 */
 var VERSION = '1.3.3';
 var isOpen = true;
