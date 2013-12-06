@@ -109,19 +109,16 @@ var asynchReqSet = [
 ];
 
 //异步加载
-chrome.webRequest.onCompleted.addListener(
-  function(details){
+chrome.webRequest.onCompleted.addListener(function(details){
   	var url = details.url;
   	for( var i = 0 , len = asynchReqSet.length; i < len ; i++ ){
   		if( asynchReqSet[i].reg.test( url ) ){
-  			// console.log('synch-title:' + asynchReqSet[i].title + '-' + url );//调试信息
 		  	chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
+  			console.log('synch-title:' + asynchReqSet[i].title , url );//调试信息
 		  	break;
   		}
   	}
-  }, {urls: ["http://*.renren.com/*"]}
-);
-
+}, {urls: ["http://*.renren.com/*"]});
 
 function getTime(){
 	var str = '',
