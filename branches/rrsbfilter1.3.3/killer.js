@@ -29,8 +29,7 @@ var pageSet = [
 	,{//1.3.1 http://www.renren.com/103433276#//status/status?id=103433276
 		title:'个人状态',//所有状态(未解决)
 		reg:/http:\/\/www\.renren\.com\/\d{9}#\/\/status\/status/,
-		// selector:{item:'div.nomore div.statuscmtitem',cmt:'span.replycontent'}
-		selector:{item:'div.statuscmtlist>div:not([class~="reply-adding"]',cmt:'span.replycontent'}
+		selector:{item:'div.statuscmtlist div.statuscmtitem:not([class~="reply-adding"]',cmt:'span.replycontent'}
 	}
 	,{//1.3.1
 		title:'首页',
@@ -117,7 +116,7 @@ function killer(){
 function setKilledNum( killedNum , scanCount ) {//设置回显个数
 	var body = document.querySelector('body');
 	body.setAttribute('rrsb_scancount', (body.getAttribute('rrsb_scancount')||0) + scanCount );
-	body.setAttribute('rrsb_killednum', (body.getAttribute('rrsb_killednum')||0) + scanCount );
+	body.setAttribute('rrsb_killednum', (body.getAttribute('rrsb_killednum')||0) + killedNum );
 
 	chrome.extension.sendRequest({
 		action: "setKilledNum",
@@ -144,11 +143,9 @@ function superKiller( json ){
 				var cmtNode = item.querySelector( cmtSelector );
 				if( cmtNode ){
 					var	cmt = cmtNode.innerText;
-					if( cmt ){
-						if( filter( cmt ) ){
-							howToTreatSB( item , i , cmt );
-							killedNum ++;
-						}
+					if( cmt && filter( cmt ) ){
+						howToTreatSB( item , i , cmt );
+						killedNum ++;
 					}
 					item.setAttribute("rrsb",1);
 					curScanCount++;
@@ -185,12 +182,12 @@ function report( msg ){
 function dataCollector( json ){
 	if( localStorage ){
 		var prefix = getDay(),
-			itemName = prefix + '_' + window.location.href ;
+		itemName   = prefix + '_' + window.location.href ;
 		if( !+localStorage.getItem( itemName ) ){
 			var paras = [];
-			json.uid = getId();
-			json.url = window.location.href;
-			json.ver = VERSION;
+			json.uid  = getId();
+			json.url  = window.location.href;
+			json.ver  = VERSION;
 			for ( var i in json ){
 				paras.push( i + '=' + encodeURIComponent( json[i] ) );
 			}
@@ -215,19 +212,21 @@ function filter ( cmt ) {
 }
 
 function punctuationFilter( cmt ){//过滤符号堆积的评论
-		var comm = filtChinese( cmt );
-		if( comm == '' ){
-			return false;
-		}
-		for (var i = 0 ; i < punctuations.length; i++) {
-			var reg = new RegExp( punctuations[i] + "+");
-			if(comm.replace( reg , '') == ''){
-				return true;
-			}
-		}
+	var comm = filtChinese( cmt );
+	if( comm == '' ){
 		return false;
+	}
+	for (var i = 0 ; i < punctuations.length; i++) {
+		var reg = new RegExp( punctuations[i] + "+");
+		if(comm.replace( reg , '') == ''){
+			return true;
+		}
+	}
+	return false;
 }
+
 var SBCmt = [];
+
 function howToTreatSB( SBNode , i , cmt ){
 	var n = 30 ,
 		tBlur  = setInterval(function(){
@@ -241,25 +240,21 @@ function howToTreatSB( SBNode , i , cmt ){
 }
 
 function loger ( killedNum, curScanCount, pageTitle ) {
-	var body = document.querySelector('body');
-	// chrome.extension.sendRequest({
-	// 	action: "getResultData"
-	// },function( response ){
-		// var SBNumCurPage = response.SBNumCurPage,
-		// scanCount = response.scanCount;
-		console.log(
-			'\n【人人2B过滤器\'s log】',
-			'\n当前页面：' + pageTitle + ' '+ window.location.href,
-			'\n本次 SB ：' + killedNum + '/' + curScanCount ,
-			'\n本页 SB ：' + body.getAttribute('rrsb_killednum') + '/' + body.getAttribute('rrsb_scancount') ,
-			'\n用户反馈：http://rrurl.cn/hM9mhk',
-			'\n执行时刻：' + getTime()
-		);
-		if( SBCmt.length ){
-			console.table( SBCmt );
-			SBCmt.length = 0;
-		}
-	// });
+	var body = document.querySelector('body'),
+		scanCountPage = body.getAttribute('rrsb_scancount')||0,
+		killedNumPage = body.getAttribute('rrsb_killednum')||0;
+	console.log(
+		'\n【人人2B过滤器\'s log】',
+		'\n当前页面：' + pageTitle + ' '+ window.location.href,
+		'\n本次 SB ：' + killedNum + '/' + curScanCount ,
+		'\n本页 SB ：' + killedNumPage + '/' + scanCountPage,
+		'\n用户反馈：http://rrurl.cn/hM9mhk',
+		'\n执行时刻：' + getTime()
+	);
+	if( SBCmt.length ){
+		console.table( SBCmt );
+		SBCmt.length = 0;
+	}
 }
 
 function getTime() {
