@@ -6,7 +6,7 @@
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
 版本：1.3.3
-更新：2013年12月7日 03:05:53
+更新：2013年12月8日 03:02:37
 */
 var isOpen = true ,
 	DELAY_POPICON = 2000,
@@ -27,12 +27,7 @@ chrome.extension.onRequest.addListener(
 					setBadge( request.killedNum + 'sb' ,  [0 , 255, 0, 100] );
 					removeBadge( DELAY_KILLEDICON );
 				}
-				// SBNumCurPage += parseInt(request.killedNum);//累加
-				// scanCount += parseInt( request.scanCount );
 				break;
-			// case 'getResultData':
-			// 	sendResponse({SBNumCurPage: SBNumCurPage,scanCount:scanCount});
-			// 	break;
 			default:break;
 		}
 	}
