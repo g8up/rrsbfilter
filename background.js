@@ -86,6 +86,10 @@ var asynchReqSet = [
 	  		title:'好友的视频分享-显示较早之前的评论',
 	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/moreurlcomment/
 	  	},
+	    {
+	  		title:'好友的最新相册',
+	  		reg:/http:\/\/photo\.renren\.com\/photo\/\d{9}\/photo\-\d+\/ajaxmsy/
+	  	},
 	  	{//added by 1.3.3
 	  		title:'首页-好友-图片动态-还有N条回复',
 	  		reg:/http:\/\/photo\.renren\.com\/photo\/feedcommentretrieve\.do/
@@ -94,11 +98,11 @@ var asynchReqSet = [
 	  		title:'我的分享-列表-异步评论',
 	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/getcomments/
 	  	}
-	  	,{//http://gossip.renren.com/ajaxgossiplist.do
+	  	,{
 	  		title:'留言板-好友',
 	  		reg:/http:\/\/gossip\.renren\.com\/ajaxgossiplist\.do/
 	  	}
-	  	,{//http://gossip.renren.com/getconversation.do
+	  	,{
 	  		title:'留言板-个人',
 	  		reg:/http:\/\/gossip\.renren\.com\/getconversation\.do/
 	  	}
@@ -124,7 +128,7 @@ chrome.webRequest.onCompleted.addListener(function(details){
   			clearTimeout( window['executeScriptTimer'] );
 		  	window['executeScriptTimer'] = setTimeout(function(){
 		  		chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
-	  			console.log('synch-title:' + asynchReqSet[i].title , url );//调试信息
+	  			console.log( asynchReqSet[i].title , url );//调试信息
 	  		},500);
 		  	break;
   		}
@@ -147,8 +151,7 @@ function setBadge( text , color ){
 	color && chrome.browserAction.setBadgeBackgroundColor({"color": color });
 }
 
-function removeBadge( delay ){
-	//移除标记
+function removeBadge( delay ){//移除标记
 	clearTimeout( window["t"] );
 	window["t"] = setTimeout(function(){
 		setBadge();
