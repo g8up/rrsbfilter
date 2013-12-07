@@ -20,3 +20,18 @@ xhr:动态（异步）请求
     http://page.renren.com/601257806?checked=true
   * 日志
     http://page.renren.com/699153758/note/813996479
+  * 相册
+    http://page.renren.com/600878193/photo/7192556818#7189985744
+    * 评论（异步）
+      http://page.renren.com/ajaxgetphoto.do?owner=600878193&id=7042959393
+    * 评论-翻页
+      http://page.renren.com/ajaxgetphotocomment
+ # 留言板
+ 	* 好友（异步）
+ 	  http://gossip.renren.com/ajaxgossiplist.do
+ 	* 个人（异步）
+ 	  http://gossip.renren.com/getconversation.do
+ # 好友最新相册
+   http://www.renren.com/103433276#!/photo/103433276/album/friends?origin=50119
+   * 评论（异步）
+     http://photo.renren.com/photo/294500781/photo-7431846308/ajaxmsy
