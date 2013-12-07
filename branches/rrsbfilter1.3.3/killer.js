@@ -25,8 +25,7 @@ var pageSet = [
 		reg:/http:\/\/www\.renren\.com\/\d{9}#!?\/\/share\/share\/\d{9}/,
 		selector:{item:'.usertalk .replybody',cmt:'span.replycontent'}
 	}
-	,{//1.3.1 http://www.renren.com/103433276#//status/status?id=103433276
-		   // http://www.renren.com/103433276#//status/status?id=200044020&doingId=5084041529&repliedId=15674399830/remind
+	,{
 		title:'个人状态',//所有状态(未解决)
 		reg:/http:\/\/www\.renren\.com\/\d{9}#\/\/status\/status/,
 		selector:{item:'div.statuscmtlist div.statuscmtitem:not([class~="reply-adding"])',cmt:'span.replycontent'}

@@ -36,7 +36,6 @@ chrome.extension.onRequest.addListener(
 chrome.browserAction.onClicked.addListener(function(tabs) {
 	switchIcon();
 	isOpen = !isOpen ;
-	isOpen ? console.log('\u4EBA\u4EBA2B\u8FC7\u6EE4\u5668OPEN -' + getTime()) : console.log('\u4EBA\u4EBA2B\u8FC7\u6EE4\u5668CLOSE-' + getTime());
 	chrome.tabs.executeScript(null, {file:"killer.js"});
 });
 
@@ -130,16 +129,6 @@ chrome.webRequest.onCompleted.addListener(function(details){
   	}
 },
 {urls: ["http://*.renren.com/*"]});
-
-function getTime(){
-	var str = '',
-		d = new Date(),
-		h = d.getHours(),
-		m = d.getMinutes(),
-		s = d.getSeconds();
-	str = h + ':' + ( m < 10 ? '0' + m : m ) + ':' + ( s < 10 ? '0' + s : s );
-	return str;
-}
 
 function setBadge( text , color ){
 	chrome.browserAction.setBadgeText({"text": text || ''});
