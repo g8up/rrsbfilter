@@ -103,7 +103,7 @@ var asynchReqSet = [
 	  	,{
 	  		title:'公共主页-相册',
 	  		reg:/http:\/\/page\.renren\.com\/ajaxcomment\/list/
-	  	}	  	
+	  	}
 	  	,{
 	  		title:'公共主页-相册2',
 	  		reg:/http:\/\/page\.renren\.com\/ajaxgetphoto\.do/
