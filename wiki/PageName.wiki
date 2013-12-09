@@ -13,6 +13,9 @@ xhr:动态（异步）请求
   http://status.renren.com/feedcommentretrieve.do
  # 个人状态
   http://www.renren.com/103433276#//status/status?id=103433276
+ # 与我相关
+  * 我参与的
+  http://www.renren.com/103433276#!//matter/103433276?page=0&from=homeleft
  # 个人相册 （added 1.3.2 ）
   http://photo.renren.com/photo/257526368/photo-5604034552
  # 浏览日志 (2013.12.04验证有效)
@@ -22,6 +25,10 @@ xhr:动态（异步）请求
   http://page.renren.com/601257806?checked=true
   * 日志
   http://page.renren.com/699153758/note/813996479
+  * 日志2
+  http://page.renren.com/601438913/channel-noteshow-918488988?id=918488988&pid=601438913&#page_assemble_ref=2393_5_3
+   * 查看更多
+   http://page.renren.com/ajaxcomment/list
   * 相册
   http://page.renren.com/600878193/photo/7192556818#7189985744
    * 评论（异步）

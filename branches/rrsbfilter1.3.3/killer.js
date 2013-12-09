@@ -18,7 +18,14 @@ var SBWORD = [
 'taobao\.com'
 ];
 //堆积的高频无意义纯字符
-var punctuations = ['\\.','·','。',',','，','`','…','0','1','2','3','='];
+var punctuations = ['\\.','·','。',',','，','`','…','~','0','1','2','3','='];
+var selectorSet = {
+	'main':{item:'.feed-replies .a-reply',cmt:'p.text'},//首页
+	'page':{item:'div.replies .p-reply',cmt:'p.text'},//公共主页
+	'gossip':{item:'#talk .cmt-body',cmt:'div.text-content'},
+	'blog':{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'},
+	'status':{item:'div.statuscmtlist div.statuscmtitem:not([class~="reply-adding"])',cmt:'span.replycontent'}
+}
 var pageSet = [
 	{
 		title:'我的分享列表',//首页匹配范围的子集，所以置于首页前1.3.1
@@ -28,42 +35,52 @@ var pageSet = [
 	,{
 		title:'个人状态',//所有状态(未解决)
 		reg:/http:\/\/www\.renren\.com\/\d{9}#\/\/status\/status/,
-		selector:{item:'div.statuscmtlist div.statuscmtitem:not([class~="reply-adding"])',cmt:'span.replycontent'}
+		selector:selectorSet['status']
+	}
+	,{//1.3.3
+		title:'与我相关-我参与的',
+		reg:/http:\/\/www\.renren\.com\/\d{9}#!\/\/matter/,
+		selector:selectorSet['status']
 	}
 	,{//1.3.1
 		title:'首页',
 		reg:/http:\/\/www\.renren\.com\/\d{9}(((\?.*)?$)|((#.*)$))/,
-		selector:{item:'.feed-replies .a-reply',cmt:'p.text'}
+		selector:selectorSet['main']
 	}
 	,{
 		title:'个人主页',
 		reg:/http:\/\/www\.renren\.com\/\d{9}\/profile/,
-		selector:{item:'.feed-replies .a-reply',cmt:'p.text'}
+		selector:selectorSet['main']
 	}
 	,{
 		title:'个人日志',
 		reg:/http:\/\/blog\.renren\.com\/blog\/\d{9}\/.+/,
-		selector:{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'}
+		selector:selectorSet['blog']
 	}
 	,{
 		title:'留言板-好友',
 		reg:/http:\/\/gossip\.renren\.com\/getgossiplist\.do\?id=\d{9}/,
-		selector:{item:'#talk .cmt-body',cmt:'div.text-content'}
+		selector:selectorSet['gossip']
 	}
 	,{
 		title:'留言板-个人',
 		reg:/http:\/\/gossip\.renren\.com\/.*/,
-		selector:{item:'#talk .cmt-body',cmt:'div.text-content'}
+		selector:selectorSet['gossip']
 	}
 	,{//1.3.1
 		title:'公共主页日志',//公共主页首页的子集，前置
 		reg:/http:\/\/page\.renren\.com\/.+\/note\/\d+/,
 		selector:{item:'#commentlist li',cmt:'div.text-content'}
 	}
+	,{//1.3.3
+		title:'公共主页日志2',//公共主页首页的子集，前置
+		reg:/http:\/\/page\.renren\.com\/\d{9}\/channel\-noteshow/,
+		selector:selectorSet['page']
+	}
 	,{//1.3.1
 		title:'公共主页相册',
 		reg:/http:\/\/page\.renren\.com\/\d{9}\/channel\-photoshow/,
-		selector:{item:'div.replies div.p-reply.clearfix',cmt:'p.text'}
+		selector:selectorSet['page']
 	}
 	,{//1.3.3
 		title:'公共主页相册2',
@@ -73,7 +90,7 @@ var pageSet = [
 	,{//1.3.1
 		title:'公共主页首页',
 		reg:/http:\/\/page\.renren\.com\/\d{9}/,
-		selector:{item:'.feed-replies .a-reply',cmt:'p.text'}//同个人主页
+		selector:selectorSet['main']
 	}
 	,{//1.3.1
 		title:'小组',
@@ -88,7 +105,7 @@ var pageSet = [
 	,{//1.3.1
 		title:'他人分享',
 		reg:/http:\/\/share\.renren\.com\/share\/\d{9}/,
-		selector:{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'}
+		selector:selectorSet['blog']
 	}
 	,{//1.3.1
 		title:'日志分享',
@@ -146,11 +163,11 @@ function superKiller( json ){
 		var len = items.length,
 			curScanCount = 0,//本次扫描个数
 			killedNum = 0;//本次sb
-		if( len > 0 ){
+		if( len ){
 			for( var i = 0 ; i < len ; i ++ ){
 				var item = items[i];
 				var cmtNode = item.querySelector( cmtSelector );
-				if( cmtNode ){
+				if( cmtNode.length ){
 					var	cmt = cmtNode.innerText;
 					if( cmt && filter( cmt ) ){
 						howToTreatSB( item , i , cmt );
@@ -240,7 +257,7 @@ var SBCmt = [];
 
 function howToTreatSB( SBNode , i , cmt ){
 	var n = 30 ,
-		tBlur  = setInterval(function(){
+	tBlur  = setInterval(function(){
 		n--;
 		SBNode.style.opacity = (n/100)+'';
 		if(n==6){
@@ -288,7 +305,7 @@ function getDay(){
 
 function getId(){
 	var index = document.querySelector('#navBar .nav-main .menu-title a');
-	if( index ){
+	if( index.length ){
 		href = index.href;
 		var id = href.replace(/http:\/\/.*\..*\.com\//,'');
 		if( id.indexOf('id') > -1 ){
