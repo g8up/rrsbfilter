@@ -20,8 +20,8 @@ var SBWORD = [
 //堆积的高频无意义纯字符
 var punctuations = ['\\.','·','。',',','，','`','…','~','0','1','2','3','='];
 var selectorSet = {
-	'main':{item:'.feed-replies .a-reply',cmt:'p.text'},//首页
 	'page':{item:'div.replies .p-reply',cmt:'p.text'},//公共主页
+	'main':{item:'.feed-replies .a-reply',cmt:'p.text'},//首页
 	'gossip':{item:'#talk .cmt-body',cmt:'div.text-content'},
 	'blog':{item:'div.statuscmtitem.clearfix',cmt:'span.replycontent'},
 	'status':{item:'div.statuscmtlist div.statuscmtitem:not([class~="reply-adding"])',cmt:'span.replycontent'}
@@ -167,7 +167,7 @@ function superKiller( json ){
 			for( var i = 0 ; i < len ; i ++ ){
 				var item = items[i];
 				var cmtNode = item.querySelector( cmtSelector );
-				if( cmtNode.length ){
+				if( cmtNode ){
 					var	cmt = cmtNode.innerText;
 					if( cmt && filter( cmt ) ){
 						howToTreatSB( item , i , cmt );

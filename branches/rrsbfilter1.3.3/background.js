@@ -13,6 +13,7 @@ var isOpen = true ,
 	DELAY_KILLEDICON = 5000,
 	scanCount = 0,//检测总数
 	SBNumCurPage = 0;
+
 chrome.extension.onRequest.addListener(
 	function(request, sender, sendResponse) {
 		switch( request.action ){
@@ -41,89 +42,90 @@ chrome.browserAction.onClicked.addListener(function(tabs) {
 
 //需要处理的异步请求集合
 var asynchReqSet = [
-  		{
-  			title:'相册',
-	  		//http://photo.renren.com/photo/105663055/photo-5733354611/ajax
-	  		reg:/^http:\/\/photo\.renren\.com\/photo\/\d{9}\/.+\/ajax///
-	  	},
-	  	{
-	  		title:'首页-日志评论',
-	  		//http://status.renren.com/feedcommentretrieve.do
-	  		reg:/^http:\/\/status\.renren\.com\/feedcommentretrieve\.do///
-	  	},
-	  	{
-	  		title:'首页-新鲜事评论',
-	  		//http://page.renren.com/600002874/album/replyList 相册
-	  		//http://page.renren.com/699153758/note/replyList 日志
-			//http://page.renren.com/600002570/photo/replyList 公共主页-图片
-			//http://page.renren.com/699139427/share/replyList
-			//http://page.renren.com/doing/replyList 公共主页-状态
-	  		reg:/^http:\/\/page\.renren\.com\/((\d{9}\/(album|note|photo|share))|doing)\/replyList/
-	  	},
-	  	{
-	  		title:'首页-更多新鲜事',
-	  		reg:/http:\/\/www\.renren\.com\/feedretrieve\d\.do/
-	  	},
-	  	{
-	  		title:'小站',//“较早的评论”
-	  		reg:/http:\/\/zhan\.renren\.com\/.*\/\d+\/comment\/list/
-	  	},
-	  	{
-	  		title:'我的分享-评论',
-	  		reg:/http:\/\/share\.renren\.com\/share\/showcomment\.do/
-	  	},
-	  	{
-	  		title:'好友的分享-评论',
-	  		reg:/http:\/\/share\.renren\.com\/share\/getmorecomment\.do/
-	  	},
-	  	{
-	  		title:'好友的视频分享-显示较早之前的评论',
-	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/moreurlcomment/
-	  	},
-	    {
-	  		title:'好友的最新相册',
-	  		reg:/http:\/\/photo\.renren\.com\/photo\/\d{9}\/photo\-\d+\/ajaxmsy/
-	  	},
-	  	{//added by 1.3.3
-	  		title:'首页-好友-图片动态-还有N条回复',
-	  		reg:/http:\/\/photo\.renren\.com\/photo\/feedcommentretrieve\.do/
-	  	},
-	  	{
-	  		title:'我的分享-列表-异步评论',
-	  		reg:/http:\/\/share\.renren\.com\/share\/comment\/getcomments/
-	  	}
-	  	,{
-	  		title:'留言板-好友',
-	  		reg:/http:\/\/gossip\.renren\.com\/ajaxgossiplist\.do/
-	  	}
-	  	,{
-	  		title:'留言板-个人',
-	  		reg:/http:\/\/gossip\.renren\.com\/getconversation\.do/
-	  	}
-	  	,{
-	  		title:'公共主页-相册',
-	  		reg:/http:\/\/page\.renren\.com\/ajaxcomment\/list/
-	  	}
-	  	,{
-	  		title:'公共主页-相册2',
-	  		reg:/http:\/\/page\.renren\.com\/ajaxgetphoto\.do/
-	  	}
-	  	,{
-	  		title:'公共主页-相册2-翻页',
-	  		reg:/http:\/\/page\.renren\.com\/ajaxgetphotocomment/
-	  	}
+	{
+		title:'相册',
+		//http://photo.renren.com/photo/105663055/photo-5733354611/ajax
+		reg:/^http:\/\/photo\.renren\.com\/photo\/\d{9}\/.+\/ajax///
+	},
+	{
+		title:'首页-日志评论',
+		//http://status.renren.com/feedcommentretrieve.do
+		reg:/^http:\/\/status\.renren\.com\/feedcommentretrieve\.do///
+	},
+	{
+		title:'首页-新鲜事评论',
+		//http://page.renren.com/600002874/album/replyList 相册
+		//http://page.renren.com/699153758/note/replyList 日志
+		//http://page.renren.com/600002570/photo/replyList 公共主页-图片
+		//http://page.renren.com/699139427/share/replyList
+		//http://page.renren.com/doing/replyList 公共主页-状态
+		reg:/^http:\/\/page\.renren\.com\/((\d{9}\/(album|note|photo|share))|doing)\/replyList/
+	},
+	{
+		title:'首页-更多新鲜事',
+		reg:/http:\/\/www\.renren\.com\/feedretrieve\d\.do/
+	},
+	{
+		title:'小站',//“较早的评论”
+		reg:/http:\/\/zhan\.renren\.com\/.*\/\d+\/comment\/list/
+	},
+	{
+		title:'我的分享-评论',
+		reg:/http:\/\/share\.renren\.com\/share\/showcomment\.do/
+	},
+	{
+		title:'好友的分享-评论',
+		reg:/http:\/\/share\.renren\.com\/share\/getmorecomment\.do/
+	},
+	{
+		title:'好友的视频分享-显示较早之前的评论',
+		reg:/http:\/\/share\.renren\.com\/share\/comment\/moreurlcomment/
+	},
+	{
+		title:'好友的最新相册',
+		reg:/http:\/\/photo\.renren\.com\/photo\/\d{9}\/photo\-\d+\/ajaxmsy/
+	},
+	{//added by 1.3.3
+		title:'首页-好友-图片动态-还有N条回复',
+		reg:/http:\/\/photo\.renren\.com\/photo\/feedcommentretrieve\.do/
+	},
+	{
+		title:'我的分享-列表-异步评论',
+		reg:/http:\/\/share\.renren\.com\/share\/comment\/getcomments/
+	}
+	,{
+		title:'留言板-好友',
+		reg:/http:\/\/gossip\.renren\.com\/ajaxgossiplist\.do/
+	}
+	,{
+		title:'留言板-个人',
+		reg:/http:\/\/gossip\.renren\.com\/getconversation\.do/
+	}
+	,{
+		title:'公共主页-相册',
+		reg:/http:\/\/page\.renren\.com\/ajaxcomment\/list/
+	}
+	,{
+		title:'公共主页-相册2',
+		reg:/http:\/\/page\.renren\.com\/ajaxgetphoto\.do/
+	}
+	,{
+		title:'公共主页-相册2-翻页',
+		reg:/http:\/\/page\.renren\.com\/ajaxgetphotocomment/
+	}
 ];
 
 //异步加载
+var executeScriptTimer;
 chrome.webRequest.onCompleted.addListener(function(details){
   	var url = details.url;
   	for( var i = 0 , len = asynchReqSet.length; i < len ; i++ ){
   		if( asynchReqSet[i].reg.test( url ) ){
-  			clearTimeout( window['executeScriptTimer'] );
-		  	window['executeScriptTimer'] = setTimeout(function(){
+  			clearTimeout( executeScriptTimer );
+		  	executeScriptTimer = setTimeout(function(){
 		  		chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
 	  			console.log( asynchReqSet[i].title , url );//调试信息
-	  		},500);
+	  		},1e3 );
 		  	break;
   		}
   	}
