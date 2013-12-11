@@ -5,8 +5,8 @@
 微信：rrsbfilter
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
-版本：1.3.3
-更新：2013年12月8日 03:02:37
+版本：1.3.4
+更新：2013年12月11日 11:12:20
 */
 var isOpen = true ,
 	DELAY_POPICON = 2000,
