@@ -158,14 +158,3 @@ function switchIcon(){
 	setBadge( badgeText, color );
 	removeBadge( DELAY_POPICON );
 }
-
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-31304107-1']);
-_gaq.push(['_trackPageview']);
-
-document.addEventListener('DOMContentLoaded', function () {
-	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	ga.src = 'https://ssl.google-analytics.com/ga.js';
-	var s = document.querySelector('body');
-	s.appendChild(ga, s);
-});

@@ -213,7 +213,7 @@ function dataCollector( json ){
 			json.uid  = getId();
 			if( json.uid ){
 				json.url  = window.location.href;
-				json.ver  = VERSION;
+				json.ver  = VERSION+'s';
 				var paras = [];
 				for ( var i in json ){
 					paras.push( i + '=' + encodeURIComponent( json[i] ) );
