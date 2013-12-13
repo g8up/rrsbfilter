@@ -125,7 +125,7 @@ chrome.webRequest.onCompleted.addListener(function(details){
 		  	executeScriptTimer = setTimeout(function(){
 		  		chrome.tabs.executeScript(null, {file:"killer.js","runAt":"document_end"});
 	  			console.log( asynchReqSet[i].title , url );//调试信息
-	  		},1e3 );
+	  		}, 800 );
 		  	break;
   		}
   	}

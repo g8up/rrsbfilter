@@ -206,22 +206,20 @@ function report( msg ){
  *added 2013.05.19 ver1.3.2
  */
 function dataCollector( json ){
-	if( localStorage ){
-		var prefix = getDay(),
-		itemName   = prefix + '_' + window.location.href ;
-		if( !+localStorage.getItem( itemName ) ){
-			json.uid  = getId();
-			if( json.uid ){
-				json.url  = window.location.href;
-				json.ver  = VERSION;
-				var paras = [];
-				for ( var i in json ){
-					paras.push( i + '=' + encodeURIComponent( json[i] ) );
-				}
-				report( paras.join('&') );
+	var prefix = getDay(),
+	itemName   = prefix + '_' + window.location.href ;
+	if( !+localStorage.getItem( itemName ) ){
+		json.uid  = getId();
+		if( json.uid ){
+			json.url  = window.location.href;
+			json.ver  = VERSION;
+			var paras = [];
+			for ( var i in json ){
+				paras.push( i + '=' + encodeURIComponent( json[i] ) );
 			}
-			localStorage.setItem( itemName , 1 );
+			report( paras.join('&') );
 		}
+		localStorage.setItem( itemName , 1 );
 	}
 }
 
