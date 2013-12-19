@@ -29,97 +29,97 @@ var selectorSet = {
 var pageSet = [
 	{
 		title:'我的分享列表',//首页匹配范围的子集，所以置于首页前1.3.1
-		reg:/http:\/\/www\.renren\.com\/\d{9}#!?\/\/share\/share\/\d{9}/,
+		reg:/^http:\/\/www\.renren\.com\/\d{9}#!?\/\/share\/share\/\d{9}/,
 		selector:{item:'.usertalk .replybody',cmt:'span.replycontent'}
 	}
 	,{
 		title:'个人状态',//所有状态(未解决)
-		reg:/http:\/\/www\.renren\.com\/\d{9}#\/\/status\/status/,
+		reg:/^http:\/\/www\.renren\.com\/\d{9}#\/\/status\/status/,
 		selector:selectorSet['status']
 	}
 	,{//1.3.3
 		title:'与我相关-我参与的',
-		reg:/http:\/\/www\.renren\.com\/\d{9}#!\/\/matter/,
+		reg:/^http:\/\/www\.renren\.com\/\d{9}#!\/\/matter/,
 		selector:selectorSet['status']
 	}
 	,{//1.3.1
 		title:'首页',
-		reg:/http:\/\/www\.renren\.com\/\d{9}(((\?.*)?$)|((#.*)$))/,
+		reg:/^http:\/\/www\.renren\.com\/\d{9}(((\?.*)?$)|((#.*)$))/,
 		selector:selectorSet['main']
 	}
 	,{
 		title:'个人主页',
-		reg:/http:\/\/www\.renren\.com\/\d{9}\/profile/,
+		reg:/^http:\/\/www\.renren\.com\/\d{9}\/profile/,
 		selector:selectorSet['main']
 	}
 	,{
 		title:'个人日志',
-		reg:/http:\/\/blog\.renren\.com\/blog\/\d{9}\/.+/,
+		reg:/^http:\/\/blog\.renren\.com\/blog\/\d{9}\/.+/,
 		selector:selectorSet['blog']
 	}
 	,{
 		title:'留言板-好友',
-		reg:/http:\/\/gossip\.renren\.com\/getgossiplist\.do\?id=\d{9}/,
+		reg:/^http:\/\/gossip\.renren\.com\/getgossiplist\.do\?id=\d{9}/,
 		selector:selectorSet['gossip']
 	}
 	,{
 		title:'留言板-个人',
-		reg:/http:\/\/gossip\.renren\.com\/.*/,
+		reg:/^http:\/\/gossip\.renren\.com\/.*/,
 		selector:selectorSet['gossip']
 	}
 	,{//1.3.1
 		title:'公共主页日志',//公共主页首页的子集，前置
-		reg:/http:\/\/page\.renren\.com\/.+\/note\/\d+/,
+		reg:/^http:\/\/page\.renren\.com\/.+\/note\/\d+/,
 		selector:{item:'#commentlist li',cmt:'div.text-content'}
 	}
 	,{//1.3.3
-		title:'公共主页日志2',//公共主页首页的子集，前置
-		reg:/http:\/\/page\.renren\.com\/\d{9}\/channel\-noteshow/,
+		title:'公共主页日志2',
+		reg:/^http:\/\/page\.renren\.com\/\d{9}\/channel\-noteshow/,
 		selector:selectorSet['page']
 	}
 	,{//1.3.1
 		title:'公共主页相册',
-		reg:/http:\/\/page\.renren\.com\/\d{9}\/channel\-photoshow/,
+		reg:/^http:\/\/page\.renren\.com\/\d{9}\/channel\-photoshow/,
 		selector:selectorSet['page']
 	}
 	,{//1.3.3
 		title:'公共主页相册2',
-		reg:/http:\/\/page\.renren\.com\/\d{9}\/photo\/\d+/,
+		reg:/^http:\/\/page\.renren\.com\/\d{9}\/photo\/\d+/,
 		selector:{item:'dl.replies dd',cmt:'p.content'}
 	}
 	,{//1.3.1
 		title:'公共主页首页',
-		reg:/http:\/\/page\.renren\.com\/\d{9}/,
+		reg:/^http:\/\/page\.renren\.com\/\d{9}/,
 		selector:selectorSet['main']
 	}
 	,{//1.3.1
 		title:'小组',
-		reg:/http:\/\/xiaozu\.renren\.com\/xiaozu\/\d+\/.+/,
+		reg:/^http:\/\/xiaozu\.renren\.com\/xiaozu\/\d+\/.+/,
 		selector:{item:'.greply-area .floor-body',cmt:'div.floor-content'}
 	}
 	,{//1.3.1
 		title:'小站',
-		reg:/http:\/\/zhan\.renren\.com\/.*/,
+		reg:/^http:\/\/zhan\.renren\.com\/.*/,
 		selector:{item:'.reply-list li',cmt:'span.comment-text'}
 	}
 	,{//1.3.1
 		title:'他人分享',
-		reg:/http:\/\/share\.renren\.com\/share\/\d{9}/,
+		reg:/^http:\/\/share\.renren\.com\/share\/\d{9}/,
 		selector:selectorSet['blog']
 	}
 	,{//1.3.1
 		title:'日志分享',
-		reg:/http:\/\/blog\.renren\.com\/share\/\d{9}/,
+		reg:/^http:\/\/blog\.renren\.com\/share\/\d{9}/,
 		selector:{item:'#cmtsListCon>div.replies div.statuscmtitem.clearfix',cmt:'span.replycontent'}
 	}
 	,{
 		title:'个人相册',//图片列表、图片详情
-		reg:/http:\/\/photo\.renren\.com\/photo\/\d{9}/,
+		reg:/^http:\/\/photo\.renren\.com\/photo\/\d{9}/,
 		selector:{item:'div.replies dl.replies dd:not([class^="digger"])' ,cmt:'p.content'}
 	}
 	,{
 		title:'好友最新相册',
-		reg:/http:\/\/photo\.renren\.com\/\d{9}#!\/photo\/\d{9}\/album\/friends/,
+		reg:/^http:\/\/photo\.renren\.com\/\d{9}#!\/photo\/\d{9}\/album\/friends/,
 		selector:{item:'ul.photoViewerCommentsList li' ,cmt:'div'}
 	}
 ];
@@ -198,7 +198,7 @@ function superKiller( json ){
 }
 
 function report( msg ){
-	new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
+	// new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
 }
 
 /**
