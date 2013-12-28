@@ -6,7 +6,7 @@
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
 版本：1.3.4
-更新：2013年12月11日 11:12:12
+更新：2013年12月29日 00:36:05
 */
 var VERSION = '1.3.3';
 var isOpen = true;
@@ -163,15 +163,24 @@ function superKiller( json ){
 		var len = items.length,
 			curScanCount = 0,//本次扫描个数
 			killedNum = 0;//本次sb
+			// debugger;
 		if( len ){
 			for( var i = 0 ; i < len ; i ++ ){
 				var item = items[i];
 				var cmtNode = item.querySelector( cmtSelector );
 				if( cmtNode ){
 					var	cmt = cmtNode.innerText;
-					if( cmt && filter( cmt ) ){
-						howToTreatSB( item , i , cmt );
-						killedNum ++;
+					if( typeof cmt !== 'undefined' ){
+						cmt = cmt.trim();
+						var hitWord = '空';
+						if( cmt != '' ){
+							hitWord = getHitWord( cmt );
+						}
+						if( hitWord ){
+							howToTreatSB( item , i , cmt );
+							killedNum ++;
+							SBCmt.push( { 'Keyword':hitWord ,'屁':cmt } );
+						}
 					}
 					item.setAttribute("rrsb",1);
 					curScanCount++;
@@ -223,18 +232,16 @@ function dataCollector( json ){
 	}
 }
 
-function filter ( cmt ) {
-	var _cmt = cmt.trim(),
-		comm = getChinese( _cmt );
-	if (comm == '') {//没有中文
-		return punctuationFilter( _cmt );
+function getHitWord ( cmt ) {
+	if ( getChinese( cmt ) == '') {//没有中文
+		return punctuationFilter( cmt );
 	}
 	for (var d = 0,	l = SBWORD.length; d < l; d++) {//扫描屏蔽词
-		if (comm.indexOf(SBWORD[d]) >= 0) {
-			return true;
+		if(cmt.indexOf(SBWORD[d]) >= 0) {
+			return SBWORD[d];
 		}
 	}
-	return false;
+	return '';
 }
 
 function punctuationFilter( cmt ){//过滤符号堆积的评论
@@ -253,7 +260,7 @@ function punctuationFilter( cmt ){//过滤符号堆积的评论
 
 var SBCmt = [];
 
-function howToTreatSB( SBNode , i , cmt ){
+function howToTreatSB( SBNode , i ){
 	var n = 30 ,
 	tBlur  = setInterval(function(){
 		n--;
@@ -262,7 +269,6 @@ function howToTreatSB( SBNode , i , cmt ){
 			clearInterval( tBlur );
 		}
 	},400);
-	SBCmt.push( { '屁':cmt.trim() } );
 }
 
 function loger ( killedNum, curScanCount, pageTitle ) {
