@@ -6,7 +6,7 @@
 电邮：IamSigma.js@gmail.com
 反馈：http://rrurl.cn/hM9mhk
 版本：1.3.4
-更新：2013年12月11日 11:12:20
+更新：2014年3月29日 21:44:26
 */
 var isOpen = true ,
 	DELAY_POPICON = 2000,
@@ -44,26 +44,18 @@ chrome.browserAction.onClicked.addListener(function(tabs) {
 var asynchReqSet = [
 	{
 		title:'相册',
-		//http://photo.renren.com/photo/105663055/photo-5733354611/ajax
 		reg:/^http:\/\/photo\.renren\.com\/photo\/\d{9}\/.+\/ajax///
 	},
 	{
 		title:'首页-日志评论',
-		//http://status.renren.com/feedcommentretrieve.do
 		reg:/^http:\/\/status\.renren\.com\/feedcommentretrieve\.do///
 	},
 	{
 		title:'首页-新鲜事评论',
-		//http://page.renren.com/600002874/album/replyList 相册
-		//http://page.renren.com/699153758/note/replyList 日志
-		//http://page.renren.com/600002570/photo/replyList 公共主页-图片
-		//http://page.renren.com/699139427/share/replyList
-		//http://page.renren.com/doing/replyList 公共主页-状态
 		reg:/^http:\/\/page\.renren\.com\/((\d{9}\/(album|note|photo|share))|doing)\/replyList/
 	},
 	{//1.3.4
 		title:'首页-新鲜事评论2',
-		//http://status.renren.com/feedcommentretrieve.do
 		reg:/^http:\/\/comment\.renren\.com\/comment\/xoa2\//
 	},
 	{
