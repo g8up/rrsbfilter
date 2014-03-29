@@ -207,7 +207,7 @@ function superKiller( json ){
 }
 
 function report( msg ){
-	// new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
+	new Image().src = "http://xuediannao.sinaapp.com/chrome/rrsbfilter/infocenter.php?istest=0&" + msg;
 }
 
 /**
